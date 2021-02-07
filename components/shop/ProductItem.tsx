@@ -1,10 +1,14 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Image } from "react-native-elements";
+import { NavigationInjectedProps, withNavigation } from "react-navigation";
 import Colors from "../../constants/Colors";
 import Product from "../../models/Product";
 
-const ProductItem: React.FC<Product> = prod => {
+const ProductItem: React.FC<Product & NavigationInjectedProps> = ({
+  navigation,
+  ...prod
+}) => {
   return (
     <View style={styles.product}>
       <Image source={{ uri: prod.imageUrl }} style={styles.image} />
@@ -17,6 +21,12 @@ const ProductItem: React.FC<Product> = prod => {
           buttonStyle={{ backgroundColor: Colors.primary }}
           containerStyle={styles.btn}
           title="View Details"
+          onPress={() =>
+            navigation.navigate("ProductDetails", {
+              productId: prod.id,
+              title: prod.title
+            })
+          }
         />
         <Button
           buttonStyle={{ backgroundColor: Colors.primary }}
@@ -28,7 +38,7 @@ const ProductItem: React.FC<Product> = prod => {
   );
 };
 
-export default ProductItem;
+export default withNavigation(ProductItem);
 
 const styles = StyleSheet.create({
   product: {

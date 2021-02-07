@@ -1,5 +1,12 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  TouchableNativeFeedback
+} from "react-native";
 import { Button, Image } from "react-native-elements";
 import { NavigationInjectedProps, withNavigation } from "react-navigation";
 import Colors from "../../constants/Colors";
@@ -9,32 +16,50 @@ const ProductItem: React.FC<Product & NavigationInjectedProps> = ({
   navigation,
   ...prod
 }) => {
+  let Touchable;
+  if (Platform.OS === "android" && Platform.Version >= 21) {
+    Touchable = TouchableNativeFeedback;
+  } else {
+    Touchable = TouchableOpacity;
+  }
   return (
-    <View style={styles.product}>
-      <Image source={{ uri: prod.imageUrl }} style={styles.image} />
-      <Text style={styles.title}>{prod.title}</Text>
-      <Text style={styles.price}>
-        ${prod.price.toFixed(2).toLocaleString()}
-      </Text>
-      <View style={styles.btnPrt}>
-        <Button
-          buttonStyle={{ backgroundColor: Colors.primary }}
-          containerStyle={styles.btn}
-          title="View Details"
-          onPress={() =>
-            navigation.navigate("ProductDetails", {
-              productId: prod.id,
-              title: prod.title
-            })
-          }
-        />
-        <Button
-          buttonStyle={{ backgroundColor: Colors.primary }}
-          containerStyle={styles.btn}
-          title="To Cart"
-        />
+    // @ts-ignore
+    <Touchable
+      background={TouchableNativeFeedback.Ripple("#ccc", false)}
+      useForeground
+      onPress={() =>
+        navigation.navigate("ProductDetails", {
+          productId: prod.id,
+          title: prod.title
+        })
+      }
+    >
+      <View style={styles.product}>
+        <Image source={{ uri: prod.imageUrl }} style={styles.image} />
+        <Text style={styles.title}>{prod.title}</Text>
+        <Text style={styles.price}>
+          ${prod.price.toFixed(2).toLocaleString()}
+        </Text>
+        <View style={styles.btnPrt}>
+          <Button
+            buttonStyle={{ backgroundColor: Colors.primary }}
+            containerStyle={styles.btn}
+            title="View Details"
+            onPress={() =>
+              navigation.navigate("ProductDetails", {
+                productId: prod.id,
+                title: prod.title
+              })
+            }
+          />
+          <Button
+            buttonStyle={{ backgroundColor: Colors.primary }}
+            containerStyle={styles.btn}
+            title="To Cart"
+          />
+        </View>
       </View>
-    </View>
+    </Touchable>
   );
 };
 

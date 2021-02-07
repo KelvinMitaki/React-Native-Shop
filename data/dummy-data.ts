@@ -37,7 +37,7 @@ const PRODUCTS = [
     "p5",
     "u3",
     "PowerBook",
-    "https://get.pxhere.com/photo/laptop-computer-macbook-mac-screen-water-board-keyboard-technology-air-mouse-photo-airport-aircraft-tablet-aviation-office-black-monitor-keys-graphic-hardware-image-pc-exhibition-multimedia-calculator-vector-water-cooling-floppy-disk-phased-out-desktop-computer-netbook-personal-computer-computer-monitor-electronic-device-computer-hardware-display-device-448748.jpg",
+    "https://images.unsplash.com/photo-1518118014377-ce94f3eae7af?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=679&q=80",
     "Awesome hardware, crappy keyboard and a hefty price. Buy now before a new one is released!",
     2299.99
   ),

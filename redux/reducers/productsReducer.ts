@@ -1,4 +1,5 @@
 import { AnyAction } from "redux";
+import PRODUCTS from "../../data/dummy-data";
 import Product from "../../models/Product";
 
 export interface ProductsState {
@@ -9,8 +10,8 @@ export interface ProductsState {
 type Action = AnyAction;
 
 const INITIAL_STATE: ProductsState = {
-  availableProducts: [],
-  userProducts: []
+  availableProducts: PRODUCTS,
+  userProducts: PRODUCTS.filter(p => p.id === "u1")
 };
 
 const productReducer = (

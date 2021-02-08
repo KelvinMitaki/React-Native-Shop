@@ -8,7 +8,7 @@ interface CartItem extends Product {
 
 export interface CartState {
   items: CartItem[];
-  totalAmount: 0;
+  totalAmount: number;
 }
 
 type Action = AddToCart;
@@ -29,13 +29,16 @@ const cartReducer = (state = INITIAL_STATE, action: Action): CartState => {
       } else {
         items = [{ ...action.payload, quantity: 1 }, ...items];
       }
+      const totalAmount = items
+        .map(it => it.quantity * it.price)
+        .reduce((acc, cur) => acc + cur);
       //   let item=state.items.find(it=>it.id===action.payload.id)
       //   if(item){
       //       item={...item,quantity:item.quantity+1}
       //   }else{
       //       item={...action.payload,quantity:1}
       //   }
-      return { ...state, items };
+      return { ...state, items, totalAmount };
     default:
       return state;
   }

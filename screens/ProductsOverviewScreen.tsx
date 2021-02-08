@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { FlatList, Platform, StyleSheet } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import {
   HeaderButton,
   HeaderButtons,
@@ -13,6 +13,8 @@ import { Redux } from "../interfaces/Redux";
 import Product from "../models/Product";
 import { Text } from "react-native-elements";
 import Colors from "../constants/Colors";
+import { NavigationDrawerProp } from "react-navigation-drawer";
+import { NavigationParams, NavigationRoute } from "react-navigation";
 
 export interface AddToCart {
   type: "addToCart";
@@ -69,6 +71,28 @@ ProductsOverviewScreen.navigationOptions = ({ navigation }) => ({
         />
       </HeaderButtons>
     </>
+  ),
+  headerLeft: () => (
+    <HeaderButtons
+      HeaderButtonComponent={props => (
+        <HeaderButton
+          {...props}
+          onPress={() =>
+            ((navigation as unknown) as NavigationDrawerProp<
+              NavigationRoute<NavigationParams>
+            >).toggleDrawer()
+          }
+        />
+      )}
+    >
+      <Item
+        title="Menu"
+        iconName="ios-menu"
+        IconComponent={Ionicons}
+        iconSize={25}
+        color={Platform.OS === "android" ? "white" : Colors.primary}
+      />
+    </HeaderButtons>
   )
 });
 

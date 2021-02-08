@@ -40,7 +40,18 @@ const cartReducer = (state = INITIAL_STATE, action: Action): CartState => {
         .reduce((acc, cur) => acc + cur);
       return { ...state, items, totalAmount, totalQuantity };
     case "removeFromCart":
-      const cartItems = state.items.filter(it => it.id !== action.payload);
+      let cartItems = state.items;
+      const itemIndex = cartItems.findIndex(it => it.id === action.payload);
+      let itemToBeDeleted = cartItems[itemIndex];
+      if (itemToBeDeleted.quantity > 1) {
+        itemToBeDeleted = {
+          ...itemToBeDeleted,
+          quantity: itemToBeDeleted.quantity - 1
+        };
+        cartItems[itemIndex] = itemToBeDeleted;
+      } else {
+        cartItems = cartItems.filter(it => it.id !== action.payload);
+      }
       let amount;
       let quantity;
       if (cartItems.length) {

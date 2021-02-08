@@ -2,7 +2,7 @@ import React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-elements";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CartItemComponent from "../components/shop/CartItem";
 import Colors from "../constants/Colors";
 import { Redux } from "../interfaces/Redux";
@@ -21,7 +21,8 @@ export interface AddOrder {
   };
 }
 
-const CartScreen: NavigationStackScreenComponent = () => {
+const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
+  const dispatch = useDispatch();
   const { items, totalAmount } = useSelector((state: Redux) => state.cart);
   return (
     <View>
@@ -33,6 +34,13 @@ const CartScreen: NavigationStackScreenComponent = () => {
           title="Order Now"
           buttonStyle={styles.btn}
           disabled={!items.length}
+          onPress={() => {
+            dispatch<AddOrder>({
+              type: "addOrder",
+              payload: { items, totalAmount }
+            });
+            navigation.navigate("Orders");
+          }}
         />
       </View>
       <FlatList
@@ -42,6 +50,10 @@ const CartScreen: NavigationStackScreenComponent = () => {
       />
     </View>
   );
+};
+
+CartScreen.navigationOptions = {
+  headerTitle: "Your Cart"
 };
 
 export default CartScreen;

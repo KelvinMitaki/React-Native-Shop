@@ -10,6 +10,7 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator } from "react-navigation-drawer";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
+import { Ionicons } from "@expo/vector-icons";
 import Colors from "./constants/Colors";
 import reducers from "./redux";
 import CartScreen from "./screens/CartScreen";
@@ -28,7 +29,7 @@ LogBox.ignoreLogs([
 enableScreens();
 const store = createStore(reducers);
 
-const defaultNavOptions: CreateNavigatorConfig<
+const options: CreateNavigatorConfig<
   StackNavigationConfig,
   NavigationStackRouterConfig,
   StackNavigationOptions,
@@ -48,18 +49,39 @@ const stackNavigator = createStackNavigator(
     ProductDetails: ProductDetailsScreen,
     Cart: CartScreen
   },
-  defaultNavOptions
+  {
+    ...options,
+    navigationOptions: {
+      drawerIcon: (config: any) => (
+        <Ionicons name="ios-cart" size={23} color={config.tintColor} />
+      )
+    }
+  }
 );
 
-const drawerNavigator = createDrawerNavigator({
-  Products: stackNavigator,
-  Orders: createStackNavigator(
-    {
-      Orders: OrdersScreen
-    },
-    defaultNavOptions
-  )
-});
+const drawerNavigator = createDrawerNavigator(
+  {
+    Products: stackNavigator,
+    Orders: createStackNavigator(
+      {
+        Orders: OrdersScreen
+      },
+      {
+        ...options,
+        navigationOptions: {
+          drawerIcon: (config: any) => (
+            <Ionicons name="ios-list" size={23} color={config.tintColor} />
+          )
+        }
+      }
+    )
+  },
+  {
+    contentOptions: {
+      activeTintColor: Colors.primary
+    }
+  }
+);
 
 const App = createAppContainer(drawerNavigator);
 

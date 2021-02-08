@@ -1,5 +1,5 @@
 import React from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import { NavigationParams, NavigationRoute } from "react-navigation";
 import { NavigationDrawerProp } from "react-navigation-drawer";
@@ -10,16 +10,25 @@ import {
 } from "react-navigation-header-buttons";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
 import { Ionicons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import { Redux } from "../interfaces/Redux";
 
 const OrdersScreen: NavigationStackScreenComponent = () => {
+  const { orders } = useSelector((state: Redux) => state.order);
   return (
     <View>
       <Text>OrdersScreen</Text>
+      <FlatList
+        data={orders}
+        keyExtractor={o => o.id}
+        renderItem={({ item }) => <Text>{item.totalAmount}</Text>}
+      />
     </View>
   );
 };
 
 OrdersScreen.navigationOptions = ({ navigation }) => ({
+  headerTitle: "Your Orders",
   headerLeft: () => (
     <HeaderButtons
       HeaderButtonComponent={props => (

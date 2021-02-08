@@ -21,6 +21,10 @@ export interface AddOrder {
   };
 }
 
+export interface ClearCart {
+  type: "clearCart";
+}
+
 const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
   const dispatch = useDispatch();
   const { items, totalAmount } = useSelector((state: Redux) => state.cart);
@@ -39,6 +43,7 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
               type: "addOrder",
               payload: { items, totalAmount }
             });
+            dispatch<ClearCart>({ type: "clearCart" });
             navigation.navigate("Orders");
           }}
         />

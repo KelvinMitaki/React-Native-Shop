@@ -1,6 +1,6 @@
 import { AnyAction } from "redux";
 import Product from "../../models/Product";
-import { RemoveFromCart } from "../../screens/CartScreen";
+import { ClearCart, RemoveFromCart } from "../../screens/CartScreen";
 import { AddToCart } from "../../screens/ProductsOverviewScreen";
 
 export interface CartItem extends Product {
@@ -13,7 +13,7 @@ export interface CartState {
   totalQuantity: number;
 }
 
-type Action = AddToCart | RemoveFromCart;
+type Action = AddToCart | RemoveFromCart | ClearCart;
 
 const INITIAL_STATE: CartState = {
   items: [],
@@ -71,6 +71,8 @@ const cartReducer = (state = INITIAL_STATE, action: Action): CartState => {
         totalAmount: amount,
         totalQuantity: quantity
       };
+    case "clearCart":
+      return { ...state, items: [] };
     default:
       return state;
   }

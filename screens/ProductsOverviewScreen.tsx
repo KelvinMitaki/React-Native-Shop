@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, Platform, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import {
   HeaderButton,
@@ -12,6 +12,7 @@ import ProductItem from "../components/shop/ProductItem";
 import { Redux } from "../interfaces/Redux";
 import Product from "../models/Product";
 import { Text } from "react-native-elements";
+import Colors from "../constants/Colors";
 
 export interface AddToCart {
   type: "addToCart";
@@ -29,13 +30,11 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
     navigation.setParams({ quantity: totalQuantity });
   }, [totalQuantity]);
   return (
-    <>
-      <FlatList
-        data={availableProducts}
-        keyExtractor={i => i.id}
-        renderItem={({ item }) => <ProductItem {...item} />}
-      />
-    </>
+    <FlatList
+      data={availableProducts}
+      keyExtractor={i => i.id}
+      renderItem={({ item }) => <ProductItem {...item} />}
+    />
   );
 };
 
@@ -66,7 +65,7 @@ ProductsOverviewScreen.navigationOptions = ({ navigation }) => ({
           iconName="opencart"
           IconComponent={FontAwesome}
           iconSize={25}
-          color="white"
+          color={Platform.OS === "android" ? "white" : Colors.primary}
         />
       </HeaderButtons>
     </>

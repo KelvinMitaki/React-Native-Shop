@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import {
@@ -11,14 +11,23 @@ import { useSelector } from "react-redux";
 import ProductItem from "../components/shop/ProductItem";
 import { Redux } from "../interfaces/Redux";
 import Product from "../models/Product";
+import { Text } from "react-native-elements";
 
 export interface AddToCart {
   type: "addToCart";
   payload: Product;
 }
 
-const ProductsOverviewScreen: NavigationStackScreenComponent = () => {
-  const { availableProducts } = useSelector((state: Redux) => state.products);
+const ProductsOverviewScreen: NavigationStackScreenComponent<{
+  quantity?: number;
+}> = ({ navigation }) => {
+  const {
+    products: { availableProducts },
+    cart: { totalQuantity }
+  } = useSelector((state: Redux) => state);
+  useEffect(() => {
+    navigation.setParams({ quantity: totalQuantity });
+  }, [totalQuantity]);
   return (
     <>
       <FlatList
@@ -33,19 +42,34 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = () => {
 ProductsOverviewScreen.navigationOptions = ({ navigation }) => ({
   headerTitle: "All Products",
   headerRight: () => (
-    <HeaderButtons
-      HeaderButtonComponent={props => (
-        <HeaderButton {...props} onPress={() => navigation.navigate("Cart")} />
-      )}
-    >
-      <Item
-        title="Cart"
-        iconName="opencart"
-        IconComponent={FontAwesome}
-        iconSize={25}
-        color="white"
-      />
-    </HeaderButtons>
+    <>
+      <Text
+        style={{
+          position: "absolute",
+          right: "10%",
+          top: "5%",
+          color: "white"
+        }}
+      >
+        {navigation.getParam("quantity")}
+      </Text>
+      <HeaderButtons
+        HeaderButtonComponent={props => (
+          <HeaderButton
+            {...props}
+            onPress={() => navigation.navigate("Cart")}
+          />
+        )}
+      >
+        <Item
+          title="Cart"
+          iconName="opencart"
+          IconComponent={FontAwesome}
+          iconSize={25}
+          color="white"
+        />
+      </HeaderButtons>
+    </>
   )
 });
 

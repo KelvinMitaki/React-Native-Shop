@@ -2,7 +2,7 @@ import { AnyAction } from "redux";
 import Product from "../../models/Product";
 import { AddToCart } from "../../screens/ProductsOverviewScreen";
 
-interface CartItem extends Product {
+export interface CartItem extends Product {
   quantity: number;
 }
 

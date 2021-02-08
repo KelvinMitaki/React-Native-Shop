@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-elements";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
 import { useSelector } from "react-redux";
+import CartItemComponent from "../components/shop/CartItem";
 import Colors from "../constants/Colors";
 import { Redux } from "../interfaces/Redux";
 
@@ -28,12 +29,7 @@ const CartScreen: NavigationStackScreenComponent = () => {
       <FlatList
         data={items}
         keyExtractor={i => i.id}
-        renderItem={({ item }) => (
-          <>
-            <Text>{item.title}</Text>
-            <Text>{item.quantity}</Text>
-          </>
-        )}
+        renderItem={({ item }) => <CartItemComponent {...item} />}
       />
     </View>
   );
@@ -55,7 +51,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 5,
     backgroundColor: "white"
   },
   pricePrt: {
@@ -68,6 +64,5 @@ const styles = StyleSheet.create({
   },
   btn: {
     backgroundColor: Colors.accent
-  },
-  btnContainer: {}
+  }
 });

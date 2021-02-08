@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { createStore } from "redux";
 import Colors from "./constants/Colors";
 import reducers from "./redux";
+import CartScreen from "./screens/CartScreen";
 import ProductDetailsScreen from "./screens/ProductDetailsScreen";
 import ProductsOverviewScreen from "./screens/ProductsOverviewScreen";
 enableScreens();
@@ -15,7 +16,8 @@ const store = createStore(reducers);
 const stackNavigator = createStackNavigator(
   {
     ProductsOverview: ProductsOverviewScreen,
-    ProductDetails: ProductDetailsScreen
+    ProductDetails: ProductDetailsScreen,
+    Cart: CartScreen
   },
   {
     defaultNavigationOptions: {

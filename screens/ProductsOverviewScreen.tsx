@@ -10,6 +10,12 @@ import { NavigationStackScreenComponent } from "react-navigation-stack";
 import { useSelector } from "react-redux";
 import ProductItem from "../components/shop/ProductItem";
 import { Redux } from "../interfaces/Redux";
+import Product from "../models/Product";
+
+export interface AddToCart {
+  type: "addToCart";
+  payload: Product;
+}
 
 const ProductsOverviewScreen: NavigationStackScreenComponent = () => {
   const { availableProducts } = useSelector((state: Redux) => state.products);
@@ -27,7 +33,11 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = () => {
 ProductsOverviewScreen.navigationOptions = ({ navigation }) => ({
   headerTitle: "All Products",
   headerRight: () => (
-    <HeaderButtons HeaderButtonComponent={props => <HeaderButton {...props} />}>
+    <HeaderButtons
+      HeaderButtonComponent={props => (
+        <HeaderButton {...props} onPress={() => navigation.navigate("Cart")} />
+      )}
+    >
       <Item
         title="Cart"
         iconName="opencart"

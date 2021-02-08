@@ -7,7 +7,11 @@ import {
   NavigationStackRouterConfig
 } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
-import { createDrawerNavigator } from "react-navigation-drawer";
+import {
+  createDrawerNavigator,
+  DrawerIconProps,
+  NavigationDrawerOptions
+} from "react-navigation-drawer";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
 import { Ionicons } from "@expo/vector-icons";
@@ -22,6 +26,7 @@ import {
   StackNavigationOptions,
   StackNavigationProp
 } from "react-navigation-stack/lib/typescript/src/vendor/types";
+import UserProductsScreen from "./screens/UserProductsScreen";
 LogBox.ignoreLogs([
   "Your project is accessing the following APIs from a deprecated global rather than a module import: Constants (expo-constants).",
   "It appears that you are using old version of react-navigation library. Please update @react-navigation/bottom-tabs, @react-navigation/stack and @react-navigation/drawer to version 5.10.0 or above to take full advantage of new functionality added to react-native-screens"
@@ -69,10 +74,25 @@ const drawerNavigator = createDrawerNavigator(
       {
         ...options,
         navigationOptions: {
-          drawerIcon: (config: any) => (
+          drawerIcon: (config: DrawerIconProps) => (
             <Ionicons name="ios-list" size={23} color={config.tintColor} />
           )
         }
+      }
+    ),
+    UserProducts: createStackNavigator(
+      {
+        // @ts-ignore
+        UserProducts: UserProductsScreen
+      },
+      {
+        ...options,
+        navigationOptions: {
+          drawerIcon: cfg => (
+            <Ionicons name="ios-create" size={23} color={cfg.tintColor} />
+          ),
+          drawerLabel: "Admin"
+        } as NavigationDrawerOptions
       }
     )
   },

@@ -1,6 +1,11 @@
 import React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
-import { Text } from "react-native-elements";
+import { FlatList, StyleSheet } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import {
+  HeaderButton,
+  HeaderButtons,
+  Item
+} from "react-navigation-header-buttons";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
 import { useSelector } from "react-redux";
 import ProductItem from "../components/shop/ProductItem";
@@ -19,9 +24,20 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = () => {
   );
 };
 
-ProductsOverviewScreen.navigationOptions = {
-  headerTitle: "All Products"
-};
+ProductsOverviewScreen.navigationOptions = ({ navigation }) => ({
+  headerTitle: "All Products",
+  headerRight: () => (
+    <HeaderButtons HeaderButtonComponent={props => <HeaderButton {...props} />}>
+      <Item
+        title="Cart"
+        iconName="opencart"
+        IconComponent={FontAwesome}
+        iconSize={25}
+        color="white"
+      />
+    </HeaderButtons>
+  )
+});
 
 export default ProductsOverviewScreen;
 

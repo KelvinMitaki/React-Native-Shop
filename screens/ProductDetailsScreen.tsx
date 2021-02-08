@@ -1,24 +1,43 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { Platform, StyleSheet } from "react-native";
 import { Button, Image, Text } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
+import {
+  HeaderButton,
+  HeaderButtons,
+  Item
+} from "react-navigation-header-buttons";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Colors from "../constants/Colors";
 import { Redux } from "../interfaces/Redux";
+import { FontAwesome } from "@expo/vector-icons";
+import { AddToCart } from "./ProductsOverviewScreen";
 
 const ProductDetailsScreen: NavigationStackScreenComponent<{
   productId?: string;
   title?: string;
+  quantity?: number;
 }> = ({ navigation }) => {
   const productId = navigation.getParam("productId");
   const prod = useSelector((state: Redux) =>
     state.products.availableProducts.find(p => p.id === productId)
   );
+  const { totalQuantity } = useSelector((state: Redux) => state.cart);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    navigation.setParams({ quantity: totalQuantity });
+  }, [totalQuantity]);
   return (
     <ScrollView>
       <Image source={{ uri: prod?.imageUrl }} style={styles.image} />
-      <Button title="Add To Cart" buttonStyle={styles.button} />
+      <Button
+        title="Add To Cart"
+        buttonStyle={styles.button}
+        onPress={() =>
+          dispatch<AddToCart>({ type: "addToCart", payload: prod! })
+        }
+      />
       <Text style={styles.price}>${prod?.price.toFixed(2)}</Text>
       <Text style={styles.description}>{prod?.description}</Text>
     </ScrollView>
@@ -26,7 +45,37 @@ const ProductDetailsScreen: NavigationStackScreenComponent<{
 };
 
 ProductDetailsScreen.navigationOptions = ({ navigation }) => ({
-  headerTitle: navigation.getParam("title")
+  headerTitle: navigation.getParam("title"),
+  headerRight: () => (
+    <>
+      <Text
+        style={{
+          position: "absolute",
+          right: "10%",
+          top: "5%",
+          color: "white"
+        }}
+      >
+        {navigation.getParam("quantity")}
+      </Text>
+      <HeaderButtons
+        HeaderButtonComponent={props => (
+          <HeaderButton
+            {...props}
+            onPress={() => navigation.navigate("Cart")}
+          />
+        )}
+      >
+        <Item
+          title="Cart"
+          iconName="opencart"
+          IconComponent={FontAwesome}
+          iconSize={25}
+          color={Platform.OS === "android" ? "white" : Colors.primary}
+        />
+      </HeaderButtons>
+    </>
+  )
 });
 
 export default ProductDetailsScreen;

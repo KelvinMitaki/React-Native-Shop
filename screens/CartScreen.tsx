@@ -5,9 +5,10 @@ import { useSelector } from "react-redux";
 import { Redux } from "../interfaces/Redux";
 
 const CartScreen = () => {
-  const { items } = useSelector((state: Redux) => state.cart);
+  const { items, totalAmount } = useSelector((state: Redux) => state.cart);
   return (
     <View>
+      <Text>Total: {totalAmount}</Text>
       <FlatList
         data={items}
         keyExtractor={i => i.id}

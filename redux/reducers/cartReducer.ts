@@ -9,13 +9,15 @@ interface CartItem extends Product {
 export interface CartState {
   items: CartItem[];
   totalAmount: number;
+  totalQuantity: number;
 }
 
 type Action = AddToCart;
 
 const INITIAL_STATE: CartState = {
   items: [],
-  totalAmount: 0
+  totalAmount: 0,
+  totalQuantity: 0
 };
 
 const cartReducer = (state = INITIAL_STATE, action: Action): CartState => {
@@ -32,13 +34,11 @@ const cartReducer = (state = INITIAL_STATE, action: Action): CartState => {
       const totalAmount = items
         .map(it => it.quantity * it.price)
         .reduce((acc, cur) => acc + cur);
-      //   let item=state.items.find(it=>it.id===action.payload.id)
-      //   if(item){
-      //       item={...item,quantity:item.quantity+1}
-      //   }else{
-      //       item={...action.payload,quantity:1}
-      //   }
-      return { ...state, items, totalAmount };
+      const totalQuantity = items
+        .map(it => it.quantity)
+        .reduce((acc, cur) => acc + cur);
+
+      return { ...state, items, totalAmount, totalQuantity };
     default:
       return state;
   }

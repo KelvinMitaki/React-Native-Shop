@@ -9,13 +9,16 @@ import {
 } from "react-native";
 import { Button, Image } from "react-native-elements";
 import { NavigationInjectedProps, withNavigation } from "react-navigation";
+import { useDispatch } from "react-redux";
 import Colors from "../../constants/Colors";
 import Product from "../../models/Product";
+import { AddToCart } from "../../screens/ProductsOverviewScreen";
 
 const ProductItem: React.FC<Product & NavigationInjectedProps> = ({
   navigation,
   ...prod
 }) => {
+  const dispatch = useDispatch();
   let Touchable;
   if (Platform.OS === "android" && Platform.Version >= 21) {
     Touchable = TouchableNativeFeedback;
@@ -56,6 +59,9 @@ const ProductItem: React.FC<Product & NavigationInjectedProps> = ({
             buttonStyle={{ backgroundColor: Colors.primary }}
             containerStyle={styles.btn}
             title="To Cart"
+            onPress={() =>
+              dispatch<AddToCart>({ type: "addToCart", payload: prod })
+            }
           />
         </View>
       </View>

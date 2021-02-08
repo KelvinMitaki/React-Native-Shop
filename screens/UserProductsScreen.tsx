@@ -16,7 +16,6 @@ import { Redux } from "../interfaces/Redux";
 
 const UserProductsScreen: NavigationStackScreenComponent = () => {
   const { userProducts } = useSelector((state: Redux) => state.products);
-  console.log(userProducts);
   return (
     <View>
       <FlatList
@@ -28,7 +27,7 @@ const UserProductsScreen: NavigationStackScreenComponent = () => {
   );
 };
 UserProductsScreen.navigationOptions = ({ navigation }) => ({
-  headerTitle: "Admin",
+  headerTitle: "My Products",
   headerLeft: () => (
     <HeaderButtons
       HeaderButtonComponent={props => (

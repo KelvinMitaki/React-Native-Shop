@@ -11,7 +11,7 @@ type Action = AnyAction;
 
 const INITIAL_STATE: ProductsState = {
   availableProducts: PRODUCTS,
-  userProducts: PRODUCTS.filter(p => p.id === "u1")
+  userProducts: PRODUCTS.filter(p => p.ownerId === "u1")
 };
 
 const productReducer = (

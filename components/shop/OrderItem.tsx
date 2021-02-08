@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-elements";
 import Colors from "../../constants/Colors";
 import Order from "../../models/Order";
+import CartItemComponent from "./CartItem";
 
 const OrderItem: React.FC<Order> = order => {
+  const [showDetails, setShowDetails] = useState<boolean>(false);
   return (
     <View style={styles.order}>
       <View style={styles.details}>
@@ -12,9 +14,14 @@ const OrderItem: React.FC<Order> = order => {
         <Text style={styles.date}>{order.date.toDateString()}</Text>
       </View>
       <Button
-        title="Show Details"
+        title={showDetails ? "Hide Details" : "Show Details"}
         buttonStyle={{ backgroundColor: Colors.primary, alignSelf: "center" }}
+        onPress={() => setShowDetails(show => !show)}
       />
+      {showDetails &&
+        order.items.map(item => (
+          <CartItemComponent {...item} key={item.id} hideDelete />
+        ))}
     </View>
   );
 };

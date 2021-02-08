@@ -6,7 +6,14 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
 import { RemoveFromCart } from "../../screens/CartScreen";
 
-const CartItemComponent: React.FC<CartItem> = it => {
+interface Props {
+  hideDelete?: boolean;
+}
+
+const CartItemComponent: React.FC<CartItem & Props> = ({
+  hideDelete,
+  ...it
+}) => {
   const dispatch = useDispatch();
   return (
     <View style={styles.item}>
@@ -18,20 +25,22 @@ const CartItemComponent: React.FC<CartItem> = it => {
       </View>
       <View style={styles.right}>
         <Text style={styles.price}>${it.price}</Text>
-        <TouchableOpacity>
-          <MaterialCommunityIcons
-            name="delete"
-            color="red"
-            size={23}
-            style={{ paddingLeft: 10 }}
-            onPress={() =>
-              dispatch<RemoveFromCart>({
-                type: "removeFromCart",
-                payload: it.id
-              })
-            }
-          />
-        </TouchableOpacity>
+        {!hideDelete && (
+          <TouchableOpacity>
+            <MaterialCommunityIcons
+              name="delete"
+              color="red"
+              size={23}
+              style={{ paddingLeft: 10 }}
+              onPress={() =>
+                dispatch<RemoveFromCart>({
+                  type: "removeFromCart",
+                  payload: it.id
+                })
+              }
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

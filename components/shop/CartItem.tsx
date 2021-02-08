@@ -3,8 +3,11 @@ import { StyleSheet, Text, View } from "react-native";
 import { CartItem } from "../../redux/reducers/cartReducer";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useDispatch } from "react-redux";
+import { RemoveFromCart } from "../../screens/CartScreen";
 
 const CartItemComponent: React.FC<CartItem> = it => {
+  const dispatch = useDispatch();
   return (
     <View style={styles.item}>
       <View style={styles.left}>
@@ -21,7 +24,12 @@ const CartItemComponent: React.FC<CartItem> = it => {
             color="red"
             size={23}
             style={{ paddingLeft: 10 }}
-            onPress={() => {}}
+            onPress={() =>
+              dispatch<RemoveFromCart>({
+                type: "removeFromCart",
+                payload: it.id
+              })
+            }
           />
         </TouchableOpacity>
       </View>

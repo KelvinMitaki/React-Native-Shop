@@ -41,17 +41,24 @@ const cartReducer = (state = INITIAL_STATE, action: Action): CartState => {
       return { ...state, items, totalAmount, totalQuantity };
     case "removeFromCart":
       const cartItems = state.items.filter(it => it.id !== action.payload);
-      const amount = cartItems
-        .map(it => it.price * it.quantity)
-        .reduce((acc, cur) => acc + cur);
-      const quatity = cartItems
-        .map(it => it.quantity)
-        .reduce((acc, cur) => acc + cur);
+      let amount;
+      let quantity;
+      if (cartItems.length) {
+        amount = cartItems
+          .map(it => it.price * it.quantity)
+          .reduce((acc, cur) => acc + cur);
+        quantity = cartItems
+          .map(it => it.quantity)
+          .reduce((acc, cur) => acc + cur);
+      } else {
+        amount = 0;
+        quantity = 0;
+      }
       return {
         ...state,
         items: cartItems,
         totalAmount: amount,
-        totalQuantity: quatity
+        totalQuantity: quantity
       };
     default:
       return state;

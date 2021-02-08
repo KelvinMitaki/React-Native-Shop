@@ -12,16 +12,16 @@ import { NavigationStackScreenComponent } from "react-navigation-stack";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import { Redux } from "../interfaces/Redux";
+import OrderItem from "../components/shop/OrderItem";
 
 const OrdersScreen: NavigationStackScreenComponent = () => {
   const { orders } = useSelector((state: Redux) => state.order);
   return (
     <View>
-      <Text>OrdersScreen</Text>
       <FlatList
         data={orders}
         keyExtractor={o => o.id}
-        renderItem={({ item }) => <Text>{item.totalAmount}</Text>}
+        renderItem={({ item }) => <OrderItem {...item} />}
       />
     </View>
   );

@@ -6,10 +6,19 @@ import { useSelector } from "react-redux";
 import CartItemComponent from "../components/shop/CartItem";
 import Colors from "../constants/Colors";
 import { Redux } from "../interfaces/Redux";
+import { CartItem } from "../redux/reducers/cartReducer";
 
 export interface RemoveFromCart {
   type: "removeFromCart";
   payload: string;
+}
+
+export interface AddOrder {
+  type: "addOrder";
+  payload: {
+    items: CartItem[];
+    totalAmount: number;
+  };
 }
 
 const CartScreen: NavigationStackScreenComponent = () => {

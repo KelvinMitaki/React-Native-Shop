@@ -1,8 +1,8 @@
-import { AnyAction } from "redux";
+import { AddOrder } from "../../screens/CartScreen";
 
 export interface OrderState {}
 
-type Action = AnyAction;
+type Action = AddOrder;
 
 const INITIAL_STATE: OrderState = {};
 

@@ -57,6 +57,28 @@ UserProductsScreen.navigationOptions = ({ navigation }) => ({
         color={Platform.OS === "android" ? "white" : Colors.primary}
       />
     </HeaderButtons>
+  ),
+  headerRight: () => (
+    <HeaderButtons
+      HeaderButtonComponent={props => (
+        <HeaderButton
+          {...props}
+          onPress={() =>
+            ((navigation as unknown) as NavigationDrawerProp<
+              NavigationRoute<NavigationParams>
+            >).navigate("AddProduct")
+          }
+        />
+      )}
+    >
+      <Item
+        title="Menu"
+        iconName="add"
+        IconComponent={Ionicons}
+        iconSize={25}
+        color={Platform.OS === "android" ? "white" : Colors.primary}
+      />
+    </HeaderButtons>
   )
 });
 export default UserProductsScreen;

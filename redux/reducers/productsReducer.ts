@@ -62,8 +62,14 @@ const productReducer = (
         i => i.id === action.payload.id
       );
       if (itemIndex !== -1 && availableProdIndex !== -1) {
-        userProducts[itemIndex] = action.payload;
-        availableProducts[availableProdIndex] = action.payload;
+        userProducts[itemIndex] = {
+          ...action.payload,
+          price: parseFloat((action.payload.price as unknown) as string)
+        };
+        availableProducts[availableProdIndex] = {
+          ...action.payload,
+          price: parseFloat((action.payload.price as unknown) as string)
+        };
         return { ...state, userProducts, availableProducts };
       } else {
         return state;

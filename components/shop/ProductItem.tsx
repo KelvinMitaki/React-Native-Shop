@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Platform,
   StyleSheet,
@@ -7,12 +7,13 @@ import {
   TouchableOpacity,
   TouchableNativeFeedback
 } from "react-native";
-import { Button, Image } from "react-native-elements";
+import { Button, Image, Overlay } from "react-native-elements";
 import { NavigationInjectedProps, withNavigation } from "react-navigation";
 import { useDispatch } from "react-redux";
 import Colors from "../../constants/Colors";
 import Product from "../../models/Product";
 import { AddToCart } from "../../screens/ProductsOverviewScreen";
+import ConfirmDelete from "./ConfirmDelete";
 
 interface Props {
   isAdmin?: boolean;
@@ -23,6 +24,7 @@ const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
   isAdmin,
   ...prod
 }) => {
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(true);
   const dispatch = useDispatch();
   let Touchable;
   if (Platform.OS === "android" && Platform.Version >= 21) {
@@ -44,6 +46,11 @@ const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
       }
     >
       <View style={styles.product}>
+        <ConfirmDelete
+          confirmDelete={confirmDelete}
+          setConfirmDelete={setConfirmDelete}
+          title={prod.title}
+        />
         <Image source={{ uri: prod.imageUrl }} style={styles.image} />
         <Text style={styles.title}>{prod.title}</Text>
         <Text style={styles.price}>
@@ -62,7 +69,7 @@ const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
                 buttonStyle={{ backgroundColor: Colors.primary }}
                 containerStyle={styles.btn}
                 title="Delete"
-                onPress={() => {}}
+                onPress={() => setConfirmDelete(true)}
               />
             </>
           ) : (

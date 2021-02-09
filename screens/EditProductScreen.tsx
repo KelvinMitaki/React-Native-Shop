@@ -56,7 +56,16 @@ const EditProductScreen: NavigationStackScreenComponent<{
   const [priceError, setPriceError] = useState<string | null>(null);
   const [descriptionError, setDescriptionError] = useState<string | null>(null);
   useEffect(() => {
-    if (!titleError && !imageUrlError && !priceError && !descriptionError) {
+    if (
+      !titleError &&
+      !imageUrlError &&
+      !priceError &&
+      !descriptionError &&
+      title.trim() &&
+      imageUrl.trim() &&
+      price.trim() &&
+      description.trim()
+    ) {
       if (!product) {
         // NEW PRODUCT
         navigation.setParams({ newProduct: dispatch });

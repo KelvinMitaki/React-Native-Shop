@@ -88,12 +88,14 @@ const EditProductScreen: NavigationStackScreenComponent<{
   product?: Prod | Product;
   newProduct?: Dispatch<AddNewProduct>;
   editProduct?: Dispatch<EditProduct>;
+  formIsValid?: boolean;
 }> = ({ navigation }) => {
   const product = useSelector((state: Redux) =>
     state.products.userProducts.find(
       p => p.id === navigation.getParam("productId")
     )
   );
+  const dispatch = useDispatch();
   const [state, reactDispatch] = useReducer(reducer, {
     inputValues: {
       title: product?.title || "",
@@ -134,23 +136,21 @@ const EditProductScreen: NavigationStackScreenComponent<{
       }
     });
   };
-  // useEffect(() => {
-  //   if (!titleError && !imageUrlError && !priceError && !descriptionError) {
-  //     if (!product) {
-  //       // NEW PRODUCT
-  //       navigation.setParams({ newProduct: dispatch });
-  //       navigation.setParams({
-  //         product: { title, description, imageUrl, price }
-  //       });
-  //     } else {
-  //       // EDIT PRODUCT
-  //       navigation.setParams({
-  //         product: { ...product, title, description, imageUrl, price }
-  //       });
-  //       navigation.setParams({ editProduct: dispatch });
-  //     }
-  //   }
-  // }, [title, description, imageUrl, price]);
+  useEffect(() => {
+    if (!product) {
+      // NEW PRODUCT
+      navigation.setParams({ newProduct: dispatch, formIsValid });
+      navigation.setParams({
+        product: { title, description, imageUrl, price }
+      });
+    } else {
+      // EDIT PRODUCT
+      navigation.setParams({
+        product: { ...product, title, description, imageUrl, price }
+      });
+      navigation.setParams({ editProduct: dispatch, formIsValid });
+    }
+  }, [title, description, imageUrl, price, formIsValid]);
   return (
     <ScrollView>
       <View style={{ marginTop: 40 }}>
@@ -251,15 +251,8 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
             onPress={() => {
               const editProduct = navigation.getParam("editProduct");
               const product = navigation.getParam("product");
-              const { description, imageUrl, price, title } = product as Prod;
-              if (
-                editProduct &&
-                product &&
-                title.trim() &&
-                imageUrl.trim() &&
-                price.trim() &&
-                description.trim()
-              ) {
+              const formIsValid = navigation.getParam("formIsValid");
+              if (editProduct && product && formIsValid) {
                 editProduct({
                   type: "editProduct",
                   payload: product as Product
@@ -267,24 +260,15 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                 navigation.popToTop();
               }
               const newProduct = navigation.getParam("newProduct");
-              if (
-                newProduct &&
-                product &&
-                title.trim() &&
-                imageUrl.trim() &&
-                price.trim() &&
-                description.trim()
-              ) {
-                newProduct({ type: "addProduct", payload: product as Prod });
+              if (newProduct && product && formIsValid) {
+                newProduct({
+                  type: "addProduct",
+                  payload: product as Prod
+                });
                 navigation.popToTop();
               }
-              if (
-                !title.trim() ||
-                !imageUrl.trim() ||
-                !price.trim() ||
-                !description.trim()
-              ) {
-                Alert.alert("Please enter all values");
+              if (!formIsValid) {
+                Alert.alert("Please fill in all form values");
               }
             }}
           />

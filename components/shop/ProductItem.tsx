@@ -14,8 +14,13 @@ import Colors from "../../constants/Colors";
 import Product from "../../models/Product";
 import { AddToCart } from "../../screens/ProductsOverviewScreen";
 
-const ProductItem: React.FC<Product & NavigationInjectedProps> = ({
+interface Props {
+  isAdmin?: boolean;
+}
+
+const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
   navigation,
+  isAdmin,
   ...prod
 }) => {
   const dispatch = useDispatch();
@@ -31,6 +36,7 @@ const ProductItem: React.FC<Product & NavigationInjectedProps> = ({
       background={TouchableNativeFeedback.Ripple("#ccc", false)}
       useForeground
       onPress={() =>
+        !isAdmin &&
         navigation.navigate("ProductDetails", {
           productId: prod.id,
           title: prod.title
@@ -44,25 +50,44 @@ const ProductItem: React.FC<Product & NavigationInjectedProps> = ({
           ${prod.price.toFixed(2).toLocaleString()}
         </Text>
         <View style={styles.btnPrt}>
-          <Button
-            buttonStyle={{ backgroundColor: Colors.primary }}
-            containerStyle={styles.btn}
-            title="View Details"
-            onPress={() =>
-              navigation.navigate("ProductDetails", {
-                productId: prod.id,
-                title: prod.title
-              })
-            }
-          />
-          <Button
-            buttonStyle={{ backgroundColor: Colors.primary }}
-            containerStyle={styles.btn}
-            title="To Cart"
-            onPress={() =>
-              dispatch<AddToCart>({ type: "addToCart", payload: prod })
-            }
-          />
+          {isAdmin ? (
+            <>
+              <Button
+                buttonStyle={{ backgroundColor: Colors.primary }}
+                containerStyle={styles.btn}
+                title="Edit"
+                onPress={() => {}}
+              />
+              <Button
+                buttonStyle={{ backgroundColor: Colors.primary }}
+                containerStyle={styles.btn}
+                title="Delete"
+                onPress={() => {}}
+              />
+            </>
+          ) : (
+            <>
+              <Button
+                buttonStyle={{ backgroundColor: Colors.primary }}
+                containerStyle={styles.btn}
+                title="View Details"
+                onPress={() =>
+                  navigation.navigate("ProductDetails", {
+                    productId: prod.id,
+                    title: prod.title
+                  })
+                }
+              />
+              <Button
+                buttonStyle={{ backgroundColor: Colors.primary }}
+                containerStyle={styles.btn}
+                title="To Cart"
+                onPress={() =>
+                  dispatch<AddToCart>({ type: "addToCart", payload: prod })
+                }
+              />
+            </>
+          )}
         </View>
       </View>
     </Touchable>

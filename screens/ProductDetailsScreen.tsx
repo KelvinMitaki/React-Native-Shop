@@ -25,9 +25,6 @@ const ProductDetailsScreen: NavigationStackScreenComponent<{
   );
   const { totalQuantity } = useSelector((state: Redux) => state.cart);
   const dispatch = useDispatch();
-  useEffect(() => {
-    navigation.setParams({ quantity: totalQuantity });
-  }, [totalQuantity]);
   return (
     <ScrollView>
       <Image source={{ uri: prod?.imageUrl }} style={styles.image} />
@@ -47,34 +44,19 @@ const ProductDetailsScreen: NavigationStackScreenComponent<{
 ProductDetailsScreen.navigationOptions = ({ navigation }) => ({
   headerTitle: navigation.getParam("title"),
   headerRight: () => (
-    <>
-      <Text
-        style={{
-          position: "absolute",
-          right: "10%",
-          top: "5%",
-          color: "white"
-        }}
-      >
-        {navigation.getParam("quantity")}
-      </Text>
-      <HeaderButtons
-        HeaderButtonComponent={props => (
-          <HeaderButton
-            {...props}
-            onPress={() => navigation.navigate("Cart")}
-          />
-        )}
-      >
-        <Item
-          title="Cart"
-          iconName="opencart"
-          IconComponent={FontAwesome}
-          iconSize={25}
-          color={Platform.OS === "android" ? "white" : Colors.primary}
-        />
-      </HeaderButtons>
-    </>
+    <HeaderButtons
+      HeaderButtonComponent={props => (
+        <HeaderButton {...props} onPress={() => navigation.navigate("Cart")} />
+      )}
+    >
+      <Item
+        title="Cart"
+        iconName="opencart"
+        IconComponent={FontAwesome}
+        iconSize={25}
+        color={Platform.OS === "android" ? "white" : Colors.primary}
+      />
+    </HeaderButtons>
   )
 });
 

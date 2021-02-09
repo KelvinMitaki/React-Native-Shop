@@ -23,14 +23,11 @@ export interface AddToCart {
 
 const ProductsOverviewScreen: NavigationStackScreenComponent<{
   quantity?: number;
-}> = ({ navigation }) => {
+}> = () => {
   const {
-    products: { availableProducts },
-    cart: { totalQuantity }
+    products: { availableProducts }
   } = useSelector((state: Redux) => state);
-  useEffect(() => {
-    navigation.setParams({ quantity: totalQuantity });
-  }, [totalQuantity]);
+
   return (
     <FlatList
       data={availableProducts}
@@ -43,34 +40,19 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
 ProductsOverviewScreen.navigationOptions = ({ navigation }) => ({
   headerTitle: "All Products",
   headerRight: () => (
-    <>
-      <Text
-        style={{
-          position: "absolute",
-          right: "10%",
-          top: "5%",
-          color: "white"
-        }}
-      >
-        {navigation.getParam("quantity")}
-      </Text>
-      <HeaderButtons
-        HeaderButtonComponent={props => (
-          <HeaderButton
-            {...props}
-            onPress={() => navigation.navigate("Cart")}
-          />
-        )}
-      >
-        <Item
-          title="Cart"
-          iconName="opencart"
-          IconComponent={FontAwesome}
-          iconSize={25}
-          color={Platform.OS === "android" ? "white" : Colors.primary}
-        />
-      </HeaderButtons>
-    </>
+    <HeaderButtons
+      HeaderButtonComponent={props => (
+        <HeaderButton {...props} onPress={() => navigation.navigate("Cart")} />
+      )}
+    >
+      <Item
+        title="Cart"
+        iconName="opencart"
+        IconComponent={FontAwesome}
+        iconSize={25}
+        color={Platform.OS === "android" ? "white" : Colors.primary}
+      />
+    </HeaderButtons>
   ),
   headerLeft: () => (
     <HeaderButtons

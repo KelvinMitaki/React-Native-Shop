@@ -21,7 +21,7 @@ const UserProductsScreen: NavigationStackScreenComponent = () => {
       <FlatList
         data={userProducts}
         keyExtractor={p => p.id}
-        renderItem={({ item }) => <ProductItem {...item} />}
+        renderItem={({ item }) => <ProductItem {...item} isAdmin />}
       />
     </View>
   );

@@ -38,11 +38,15 @@ const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
       background={TouchableNativeFeedback.Ripple("#ccc", false)}
       useForeground
       onPress={() =>
-        !isAdmin &&
-        navigation.navigate("ProductDetails", {
-          productId: prod.id,
-          title: prod.title
-        })
+        !isAdmin
+          ? navigation.navigate("ProductDetails", {
+              productId: prod.id,
+              title: prod.title
+            })
+          : navigation.navigate("EditProduct", {
+              productId: prod.id,
+              title: prod.title
+            })
       }
     >
       <View style={styles.product}>

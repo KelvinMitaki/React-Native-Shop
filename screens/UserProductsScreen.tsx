@@ -63,11 +63,7 @@ UserProductsScreen.navigationOptions = ({ navigation }) => ({
       HeaderButtonComponent={props => (
         <HeaderButton
           {...props}
-          onPress={() =>
-            ((navigation as unknown) as NavigationDrawerProp<
-              NavigationRoute<NavigationParams>
-            >).navigate("AddProduct")
-          }
+          onPress={() => navigation.navigate("EditProduct")}
         />
       )}
     >

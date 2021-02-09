@@ -1,5 +1,6 @@
 import PRODUCTS from "../../data/dummy-data";
 import Product from "../../models/Product";
+import { AddNewProduct, EditProduct } from "../../screens/EditProductScreen";
 import { DeleteItem } from "../../screens/UserProductsScreen";
 
 export interface ProductsState {
@@ -7,7 +8,7 @@ export interface ProductsState {
   userProducts: Product[];
 }
 
-type Action = DeleteItem;
+type Action = DeleteItem | AddNewProduct | EditProduct;
 
 const INITIAL_STATE: ProductsState = {
   availableProducts: PRODUCTS,
@@ -30,6 +31,44 @@ const productReducer = (
           item => item.id !== id
         )
       };
+    case "addProduct":
+      const prodId = Math.random().toString();
+      return {
+        ...state,
+        availableProducts: [
+          {
+            ...action.payload,
+            id: prodId,
+            ownerId: "u1",
+            price: (action.payload.price as unknown) as number
+          },
+          ...state.availableProducts
+        ],
+        userProducts: [
+          {
+            ...action.payload,
+            id: prodId,
+            ownerId: "u1",
+            price: (action.payload.price as unknown) as number
+          },
+          ...state.availableProducts
+        ]
+      };
+    case "editProduct":
+      let userProducts = state.userProducts;
+      let availableProducts = state.availableProducts;
+      const itemIndex = userProducts.findIndex(i => i.id === action.payload.id);
+      const availableProdIndex = availableProducts.findIndex(
+        i => i.id === action.payload.id
+      );
+      if (itemIndex !== -1 && availableProdIndex !== -1) {
+        userProducts[itemIndex] = action.payload;
+        availableProducts[availableProdIndex] = action.payload;
+        return { ...state, userProducts, availableProducts };
+      } else {
+        return state;
+      }
+
     default:
       return state;
   }

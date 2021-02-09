@@ -24,7 +24,7 @@ const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
   isAdmin,
   ...prod
 }) => {
-  const [confirmDelete, setConfirmDelete] = useState<boolean>(true);
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const dispatch = useDispatch();
   let Touchable;
   if (Platform.OS === "android" && Platform.Version >= 21) {
@@ -49,7 +49,7 @@ const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
         <ConfirmDelete
           confirmDelete={confirmDelete}
           setConfirmDelete={setConfirmDelete}
-          title={prod.title}
+          {...prod}
         />
         <Image source={{ uri: prod.imageUrl }} style={styles.image} />
         <Text style={styles.title}>{prod.title}</Text>

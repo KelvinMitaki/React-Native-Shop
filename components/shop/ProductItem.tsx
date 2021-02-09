@@ -63,7 +63,12 @@ const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
                 buttonStyle={{ backgroundColor: Colors.primary }}
                 containerStyle={styles.btn}
                 title="Edit"
-                onPress={() => {}}
+                onPress={() =>
+                  navigation.navigate("EditProduct", {
+                    productId: prod.id,
+                    title: prod.title
+                  })
+                }
               />
               <Button
                 buttonStyle={{ backgroundColor: Colors.primary }}

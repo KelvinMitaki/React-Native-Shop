@@ -42,8 +42,14 @@ const EditProductScreen: NavigationStackScreenComponent<{
           placeholder="Image URL"
         />
         <Input
-          value={price}
-          onChangeText={t => setPrice(t)}
+          value={price.trim()}
+          onChangeText={t =>
+            (/^\d+$/.test(t) ||
+              (!isNaN((t as unknown) as number) &&
+                t.toString().indexOf(".") != -1) ||
+              t === "") &&
+            setPrice(t)
+          }
           keyboardType="number-pad"
           placeholder="Price"
         />

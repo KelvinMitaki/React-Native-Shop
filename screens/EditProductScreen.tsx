@@ -51,20 +51,25 @@ const EditProductScreen: NavigationStackScreenComponent<{
   const [description, setDescription] = useState<string>(
     product?.description || ""
   );
-  useEffect(() => {}, []);
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [imageUrlError, setImageUrlError] = useState<string | null>(null);
+  const [priceError, setPriceError] = useState<string | null>(null);
+  const [descriptionError, setDescriptionError] = useState<string | null>(null);
   useEffect(() => {
-    if (!product) {
-      // NEW PRODUCT
-      navigation.setParams({ newProduct: dispatch });
-      navigation.setParams({
-        product: { title, description, imageUrl, price }
-      });
-    } else {
-      // EDIT PRODUCT
-      navigation.setParams({
-        product: { ...product, title, description, imageUrl, price }
-      });
-      navigation.setParams({ editProduct: dispatch });
+    if (!titleError && !imageUrlError && !priceError && !descriptionError) {
+      if (!product) {
+        // NEW PRODUCT
+        navigation.setParams({ newProduct: dispatch });
+        navigation.setParams({
+          product: { title, description, imageUrl, price }
+        });
+      } else {
+        // EDIT PRODUCT
+        navigation.setParams({
+          product: { ...product, title, description, imageUrl, price }
+        });
+        navigation.setParams({ editProduct: dispatch });
+      }
     }
   }, [title, description, imageUrl, price]);
   return (
@@ -74,11 +79,45 @@ const EditProductScreen: NavigationStackScreenComponent<{
           value={title}
           onChangeText={t => setTitle(t)}
           placeholder="Title"
+          autoCapitalize="words"
+          onEndEditing={() =>
+            title.trim().length < 1
+              ? setTitleError("enter a valid title")
+              : setTitleError(null)
+          }
+          errorMessage={titleError || ""}
+          inputContainerStyle={{
+            ...(titleError && {
+              borderBottomColor: "red"
+            })
+          }}
+          errorStyle={{
+            fontSize: 16,
+            fontWeight: "bold",
+            textTransform: "capitalize"
+          }}
         />
         <Input
           value={imageUrl}
           onChangeText={t => setImageUrl(t)}
           placeholder="Image URL"
+          autoCapitalize="none"
+          onEndEditing={() =>
+            imageUrl.trim().length < 1
+              ? setImageUrlError("enter a valid image url")
+              : setImageUrlError(null)
+          }
+          errorMessage={imageUrlError || ""}
+          inputContainerStyle={{
+            ...(imageUrlError && {
+              borderBottomColor: "red"
+            })
+          }}
+          errorStyle={{
+            fontSize: 16,
+            fontWeight: "bold",
+            textTransform: "capitalize"
+          }}
         />
         <Input
           value={price.trim()}
@@ -91,11 +130,43 @@ const EditProductScreen: NavigationStackScreenComponent<{
           }
           keyboardType="number-pad"
           placeholder="Price in $"
+          onEndEditing={() =>
+            price.trim().length < 1
+              ? setPriceError("enter a valid price")
+              : setPriceError(null)
+          }
+          errorMessage={priceError || ""}
+          inputContainerStyle={{
+            ...(priceError && {
+              borderBottomColor: "red"
+            })
+          }}
+          errorStyle={{
+            fontSize: 16,
+            fontWeight: "bold",
+            textTransform: "capitalize"
+          }}
         />
         <Input
           value={description}
           onChangeText={t => setDescription(t)}
           placeholder="Description"
+          onEndEditing={() =>
+            description.trim().length < 1
+              ? setDescriptionError("enter a valid title")
+              : setDescriptionError(null)
+          }
+          errorMessage={descriptionError || ""}
+          inputContainerStyle={{
+            ...(descriptionError && {
+              borderBottomColor: "red"
+            })
+          }}
+          errorStyle={{
+            fontSize: 16,
+            fontWeight: "bold",
+            textTransform: "capitalize"
+          }}
         />
       </View>
     </ScrollView>

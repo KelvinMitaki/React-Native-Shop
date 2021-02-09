@@ -8,11 +8,12 @@ import {
   Item
 } from "react-navigation-header-buttons";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import { Redux } from "../interfaces/Redux";
 import Product from "../models/Product";
+import { Dispatch } from "redux";
 
 interface Prod {
   title: string;
@@ -34,21 +35,37 @@ export interface AddNewProduct {
 const EditProductScreen: NavigationStackScreenComponent<{
   productId?: string;
   title?: string;
-  product?: Prod;
+  product?: Prod | Product;
+  newProduct?: Dispatch<AddNewProduct>;
+  editProduct?: Dispatch<EditProduct>;
 }> = ({ navigation }) => {
   const product = useSelector((state: Redux) =>
     state.products.userProducts.find(
       p => p.id === navigation.getParam("productId")
     )
   );
+  const dispatch = useDispatch();
   const [title, setTitle] = useState<string>(product?.title || "");
   const [imageUrl, setImageUrl] = useState<string>(product?.imageUrl || "");
   const [price, setPrice] = useState<string>(product?.price.toString() || "");
   const [description, setDescription] = useState<string>(
     product?.description || ""
   );
+  useEffect(() => {}, []);
   useEffect(() => {
-    navigation.setParams({ product: { title, description, imageUrl, price } });
+    if (!product) {
+      // NEW PRODUCT
+      navigation.setParams({ newProduct: dispatch });
+      navigation.setParams({
+        product: { title, description, imageUrl, price }
+      });
+    } else {
+      // EDIT PRODUCT
+      navigation.setParams({
+        product: { ...product, title, description, imageUrl, price }
+      });
+      navigation.setParams({ editProduct: dispatch });
+    }
   }, [title, description, imageUrl, price]);
   return (
     <ScrollView>
@@ -93,7 +110,22 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
         HeaderButtonComponent={props => (
           <HeaderButton
             {...props}
-            onPress={() => console.log(navigation.getParam("product"))}
+            onPress={() => {
+              const editProduct = navigation.getParam("editProduct");
+              const product = navigation.getParam("product");
+              if (editProduct && product) {
+                editProduct({
+                  type: "editProduct",
+                  payload: product as Product
+                });
+                navigation.popToTop();
+              }
+              const newProduct = navigation.getParam("newProduct");
+              if (newProduct && product) {
+                newProduct({ type: "addProduct", payload: product as Prod });
+                navigation.popToTop();
+              }
+            }}
           />
         )}
       >

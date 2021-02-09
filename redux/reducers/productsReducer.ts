@@ -40,7 +40,7 @@ const productReducer = (
             ...action.payload,
             id: prodId,
             ownerId: "u1",
-            price: (action.payload.price as unknown) as number
+            price: parseFloat(action.payload.price)
           },
           ...state.availableProducts
         ],
@@ -49,7 +49,7 @@ const productReducer = (
             ...action.payload,
             id: prodId,
             ownerId: "u1",
-            price: (action.payload.price as unknown) as number
+            price: parseFloat(action.payload.price)
           },
           ...state.availableProducts
         ]

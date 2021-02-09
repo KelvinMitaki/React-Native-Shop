@@ -14,6 +14,14 @@ import ProductItem from "../components/shop/ProductItem";
 import Colors from "../constants/Colors";
 import { Redux } from "../interfaces/Redux";
 
+export interface DeleteItem {
+  type: "deleteItem";
+  payload: {
+    id: string;
+    ownerId: string;
+  };
+}
+
 const UserProductsScreen: NavigationStackScreenComponent = () => {
   const { userProducts } = useSelector((state: Redux) => state.products);
   return (

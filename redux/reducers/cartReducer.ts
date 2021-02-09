@@ -2,6 +2,7 @@ import { AnyAction } from "redux";
 import Product from "../../models/Product";
 import { ClearCart, RemoveFromCart } from "../../screens/CartScreen";
 import { AddToCart } from "../../screens/ProductsOverviewScreen";
+import { DeleteItem } from "../../screens/UserProductsScreen";
 
 export interface CartItem extends Product {
   quantity: number;
@@ -13,7 +14,7 @@ export interface CartState {
   totalQuantity: number;
 }
 
-type Action = AddToCart | RemoveFromCart | ClearCart;
+type Action = AddToCart | RemoveFromCart | ClearCart | DeleteItem;
 
 const INITIAL_STATE: CartState = {
   items: [],
@@ -73,6 +74,26 @@ const cartReducer = (state = INITIAL_STATE, action: Action): CartState => {
       };
     case "clearCart":
       return { ...state, items: [], totalQuantity: 0, totalAmount: 0 };
+    case "deleteItem":
+      const newItems = state.items.filter(it => it.id !== action.payload.id);
+      let newAmount, newQuantity;
+      if (newItems.length) {
+        newAmount = newItems
+          .map(it => it.price * it.quantity)
+          .reduce((acc, cur) => acc + cur);
+        newQuantity = newItems
+          .map(it => it.quantity)
+          .reduce((acc, cur) => acc + cur);
+      } else {
+        newAmount = 0;
+        newQuantity = 0;
+      }
+      return {
+        ...state,
+        items: newItems,
+        totalAmount: newAmount,
+        totalQuantity: newQuantity
+      };
     default:
       return state;
   }

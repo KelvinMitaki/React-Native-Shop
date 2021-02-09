@@ -24,7 +24,10 @@ const productReducer = (
       return {
         ...state,
         userProducts: state.userProducts.filter(
-          item => item.id !== id && item.ownerId !== ownerId
+          item => item.id !== id && item.ownerId === ownerId
+        ),
+        availableProducts: state.availableProducts.filter(
+          item => item.id !== id
         )
       };
     default:

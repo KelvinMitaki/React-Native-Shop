@@ -25,7 +25,10 @@ const ConfirmDelete: React.FC<Props & Product> = ({
       onBackdropPress={() => setConfirmDelete(false)}
     >
       <View>
-        <Text>Are You Sure You Want To Delete {title}?</Text>
+        <Text>
+          Are You Sure You Want To Delete{" "}
+          <Text style={{ fontWeight: "bold" }}>{title}</Text>?
+        </Text>
         <View style={styles.btnPrt}>
           <Button
             title="Cancel"

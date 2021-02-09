@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useReducer, useState } from "react";
+import { Alert, Platform, StyleSheet, Text, View } from "react-native";
 import { Input } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import {
@@ -21,7 +21,18 @@ interface Prod {
   price: string;
   description: string;
 }
-
+interface Valid {
+  title?: boolean;
+  imageUrl?: boolean;
+  price?: boolean;
+  description?: boolean;
+}
+interface FormInput {
+  title?: string;
+  imageUrl?: string;
+  price?: string;
+  description?: string;
+}
 export interface EditProduct {
   type: "editProduct";
   payload: Product;
@@ -31,6 +42,45 @@ export interface AddNewProduct {
   type: "addProduct";
   payload: Prod;
 }
+interface State {
+  inputValues: Prod;
+  inputValidities: Valid;
+  formIsValid: boolean;
+}
+interface ValidateFormInput {
+  type: "validateFormInput";
+  payload: {
+    inputValues: FormInput;
+    inputValidities: Valid;
+  };
+}
+type Action = ValidateFormInput;
+const reducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case "validateFormInput":
+      const inputValues = {
+        ...state.inputValues,
+        ...action.payload.inputValues
+      };
+      const inputValidities = {
+        ...state.inputValidities,
+        ...action.payload.inputValidities
+      };
+      let formIsValid;
+      if (
+        Object.values(state.inputValidities).some(
+          (val: boolean) => val === false
+        )
+      ) {
+        formIsValid = false;
+      } else {
+        formIsValid = true;
+      }
+      return { ...state, inputValues, inputValidities, formIsValid };
+    default:
+      return state;
+  }
+};
 
 const EditProductScreen: NavigationStackScreenComponent<{
   productId?: string;
@@ -44,59 +94,75 @@ const EditProductScreen: NavigationStackScreenComponent<{
       p => p.id === navigation.getParam("productId")
     )
   );
-  const dispatch = useDispatch();
-  const [title, setTitle] = useState<string>(product?.title || "");
-  const [imageUrl, setImageUrl] = useState<string>(product?.imageUrl || "");
-  const [price, setPrice] = useState<string>(product?.price.toString() || "");
-  const [description, setDescription] = useState<string>(
-    product?.description || ""
-  );
-  const [titleError, setTitleError] = useState<string | null>(null);
-  const [imageUrlError, setImageUrlError] = useState<string | null>(null);
-  const [priceError, setPriceError] = useState<string | null>(null);
-  const [descriptionError, setDescriptionError] = useState<string | null>(null);
-  useEffect(() => {
-    if (
-      !titleError &&
-      !imageUrlError &&
-      !priceError &&
-      !descriptionError &&
-      title.trim() &&
-      imageUrl.trim() &&
-      price.trim() &&
-      description.trim()
-    ) {
-      if (!product) {
-        // NEW PRODUCT
-        navigation.setParams({ newProduct: dispatch });
-        navigation.setParams({
-          product: { title, description, imageUrl, price }
-        });
-      } else {
-        // EDIT PRODUCT
-        navigation.setParams({
-          product: { ...product, title, description, imageUrl, price }
-        });
-        navigation.setParams({ editProduct: dispatch });
-      }
+  const [state, reactDispatch] = useReducer(reducer, {
+    inputValues: {
+      title: product?.title || "",
+      price: product?.imageUrl || "",
+      imageUrl: product?.price.toString() || "",
+      description: product?.description || ""
+    },
+    inputValidities: {
+      description: true,
+      imageUrl: true,
+      price: true,
+      title: true
+    },
+    formIsValid: product ? true : false
+  } as State);
+  const {
+    inputValues: { title, price, imageUrl, description },
+    formIsValid,
+    inputValidities
+  } = state;
+  const updateFormInput = (
+    value: string,
+    name: "title" | "price" | "imageUrl" | "description"
+  ) => {
+    let isValid = false;
+    if (value.trim().length !== 0) {
+      isValid = true;
     }
-  }, [title, description, imageUrl, price]);
+    reactDispatch({
+      type: "validateFormInput",
+      payload: {
+        inputValues: {
+          [name]: value
+        },
+        inputValidities: {
+          [name]: isValid
+        }
+      }
+    });
+  };
+  // useEffect(() => {
+  //   if (!titleError && !imageUrlError && !priceError && !descriptionError) {
+  //     if (!product) {
+  //       // NEW PRODUCT
+  //       navigation.setParams({ newProduct: dispatch });
+  //       navigation.setParams({
+  //         product: { title, description, imageUrl, price }
+  //       });
+  //     } else {
+  //       // EDIT PRODUCT
+  //       navigation.setParams({
+  //         product: { ...product, title, description, imageUrl, price }
+  //       });
+  //       navigation.setParams({ editProduct: dispatch });
+  //     }
+  //   }
+  // }, [title, description, imageUrl, price]);
   return (
     <ScrollView>
       <View style={{ marginTop: 40 }}>
         <Input
           value={title}
-          onChangeText={t => setTitle(t)}
+          onBlur={() => updateFormInput(title, "title")}
+          onChangeText={t => updateFormInput(t, "title")}
           placeholder="Title"
           autoCapitalize="words"
-          onEndEditing={() =>
-            title.trim().length < 1
-              ? setTitleError("enter a valid title")
-              : setTitleError(null)
-          }
-          errorMessage={titleError || ""}
+          errorMessage={!inputValidities.title ? "enter a valid title" : ""}
           inputContainerStyle={{
-            ...(titleError && {
+            ...(!inputValidities.title && {
               borderBottomColor: "red"
             })
           }}
@@ -108,17 +174,15 @@ const EditProductScreen: NavigationStackScreenComponent<{
         />
         <Input
           value={imageUrl}
-          onChangeText={t => setImageUrl(t)}
+          onBlur={() => updateFormInput(imageUrl, "imageUrl")}
+          onChangeText={t => updateFormInput(t, "imageUrl")}
           placeholder="Image URL"
           autoCapitalize="none"
-          onEndEditing={() =>
-            imageUrl.trim().length < 1
-              ? setImageUrlError("enter a valid image url")
-              : setImageUrlError(null)
+          errorMessage={
+            !inputValidities.imageUrl ? "enter a valid image url" : ""
           }
-          errorMessage={imageUrlError || ""}
           inputContainerStyle={{
-            ...(imageUrlError && {
+            ...(!inputValidities.imageUrl && {
               borderBottomColor: "red"
             })
           }}
@@ -130,23 +194,19 @@ const EditProductScreen: NavigationStackScreenComponent<{
         />
         <Input
           value={price.trim()}
+          onBlur={() => updateFormInput(price, "price")}
           onChangeText={t =>
             (/^\d+$/.test(t) ||
               (!isNaN((t as unknown) as number) &&
                 t.toString().indexOf(".") != -1) ||
               t === "") &&
-            setPrice(t)
+            updateFormInput(t, "price")
           }
           keyboardType="number-pad"
           placeholder="Price in $"
-          onEndEditing={() =>
-            price.trim().length < 1
-              ? setPriceError("enter a valid price")
-              : setPriceError(null)
-          }
-          errorMessage={priceError || ""}
+          errorMessage={!inputValidities.price ? "enter a valid price" : ""}
           inputContainerStyle={{
-            ...(priceError && {
+            ...(!inputValidities.price && {
               borderBottomColor: "red"
             })
           }}
@@ -158,16 +218,14 @@ const EditProductScreen: NavigationStackScreenComponent<{
         />
         <Input
           value={description}
-          onChangeText={t => setDescription(t)}
+          onBlur={() => updateFormInput(description, "description")}
+          onChangeText={t => updateFormInput(t, "description")}
           placeholder="Description"
-          onEndEditing={() =>
-            description.trim().length < 1
-              ? setDescriptionError("enter a valid title")
-              : setDescriptionError(null)
+          errorMessage={
+            !inputValidities.description ? "enter a valid description" : ""
           }
-          errorMessage={descriptionError || ""}
           inputContainerStyle={{
-            ...(descriptionError && {
+            ...(!inputValidities.description && {
               borderBottomColor: "red"
             })
           }}
@@ -193,7 +251,15 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
             onPress={() => {
               const editProduct = navigation.getParam("editProduct");
               const product = navigation.getParam("product");
-              if (editProduct && product) {
+              const { description, imageUrl, price, title } = product as Prod;
+              if (
+                editProduct &&
+                product &&
+                title.trim() &&
+                imageUrl.trim() &&
+                price.trim() &&
+                description.trim()
+              ) {
                 editProduct({
                   type: "editProduct",
                   payload: product as Product
@@ -201,9 +267,24 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                 navigation.popToTop();
               }
               const newProduct = navigation.getParam("newProduct");
-              if (newProduct && product) {
+              if (
+                newProduct &&
+                product &&
+                title.trim() &&
+                imageUrl.trim() &&
+                price.trim() &&
+                description.trim()
+              ) {
                 newProduct({ type: "addProduct", payload: product as Prod });
                 navigation.popToTop();
+              }
+              if (
+                !title.trim() ||
+                !imageUrl.trim() ||
+                !price.trim() ||
+                !description.trim()
+              ) {
+                Alert.alert("Please enter all values");
               }
             }}
           />

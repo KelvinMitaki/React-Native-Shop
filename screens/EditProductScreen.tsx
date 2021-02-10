@@ -21,12 +21,14 @@ import Colors from "../constants/Colors";
 import { Redux } from "../interfaces/Redux";
 import Product from "../models/Product";
 import { Dispatch } from "redux";
+import axios from "../axios/axios";
 
 interface Prod {
   title: string;
   imageUrl: string;
   price: string;
   description: string;
+  id?: string;
 }
 interface Valid {
   title?: boolean;
@@ -259,7 +261,7 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
         HeaderButtonComponent={props => (
           <HeaderButton
             {...props}
-            onPress={() => {
+            onPress={async () => {
               const editProduct = navigation.getParam("editProduct");
               const product = navigation.getParam("product");
               const formIsValid = navigation.getParam("formIsValid");
@@ -272,11 +274,17 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
               }
               const newProduct = navigation.getParam("newProduct");
               if (newProduct && product && formIsValid) {
-                newProduct({
-                  type: "addProduct",
-                  payload: product as Prod
-                });
-                navigation.popToTop();
+                try {
+                  const { data } = await axios.post("/products.json", product);
+                  console.log(data);
+                  newProduct({
+                    type: "addProduct",
+                    payload: { ...product, id: data.name } as Prod
+                  });
+                  navigation.popToTop();
+                } catch (error) {
+                  console.log(error);
+                }
               }
               if (!formIsValid) {
                 Alert.alert("Please fill in all form values");

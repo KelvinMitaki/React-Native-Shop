@@ -32,13 +32,12 @@ const productReducer = (
         )
       };
     case "addProduct":
-      const prodId = Math.random().toString();
       return {
         ...state,
         availableProducts: [
           {
             ...action.payload,
-            id: prodId,
+            id: action.payload.id!,
             ownerId: "u1",
             price: parseFloat(action.payload.price)
           },
@@ -47,7 +46,7 @@ const productReducer = (
         userProducts: [
           {
             ...action.payload,
-            id: prodId,
+            id: action.payload.id!,
             ownerId: "u1",
             price: parseFloat(action.payload.price)
           },

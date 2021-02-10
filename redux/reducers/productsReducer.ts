@@ -12,8 +12,8 @@ export interface ProductsState {
 type Action = DeleteItem | AddNewProduct | EditProduct | FetchProducts;
 
 const INITIAL_STATE: ProductsState = {
-  availableProducts: PRODUCTS,
-  userProducts: PRODUCTS.filter(p => p.ownerId === "u1")
+  availableProducts: [],
+  userProducts: []
 };
 
 const productReducer = (

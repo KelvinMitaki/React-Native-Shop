@@ -109,8 +109,8 @@ const EditProductScreen: NavigationStackScreenComponent<{
   const [state, reactDispatch] = useReducer(reducer, {
     inputValues: {
       title: product?.title || "",
-      price: product?.imageUrl || "",
-      imageUrl: product?.price.toString() || "",
+      price: product?.price.toString() || "",
+      imageUrl: product?.imageUrl || "",
       description: product?.description || ""
     },
     inputValidities: {
@@ -274,11 +274,7 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
               const product = navigation.getParam("product");
               const formIsValid = navigation.getParam("formIsValid");
               if (editProduct && product && formIsValid) {
-                const { data } = await axios.patch(
-                  `/products/${product.id}.json`,
-                  product
-                );
-                console.log(data);
+                await axios.patch(`/products/${product.id}.json`, product);
                 editProduct({
                   type: "editProduct",
                   payload: product as Product

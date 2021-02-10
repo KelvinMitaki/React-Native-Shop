@@ -20,23 +20,33 @@ import {
 } from "react-navigation-header-buttons";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Redux } from "../interfaces/Redux";
 import OrderItem from "../components/shop/OrderItem";
 import { Button } from "react-native-elements";
 import Colors from "../constants/Colors";
 import axios from "../axios/axios";
+import Order from "../models/Order";
+
+export interface FetchOrders {
+  type: "fetchOrders";
+  payload: Order[];
+}
 
 const OrdersScreen: NavigationStackScreenComponent = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch();
   const { orders } = useSelector((state: Redux) => state.order);
   const fetchOrders = useCallback(async (shouldLoad?: boolean) => {
     try {
       shouldLoad && setLoading(true);
       setError(null);
       const { data } = await axios.get("/orders.json");
-      console.log(Object.keys(data).map(key => ({ id: key, ...data[key] })));
+      dispatch<FetchOrders>({
+        type: "fetchOrders",
+        payload: Object.keys(data).map(key => ({ id: key, ...data[key] }))
+      });
       shouldLoad && setLoading(false);
     } catch (error) {
       shouldLoad && setLoading(false);

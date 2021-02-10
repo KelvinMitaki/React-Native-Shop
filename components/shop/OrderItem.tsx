@@ -13,7 +13,7 @@ const OrderItem: React.FC<Order> = order => {
         <Text style={styles.amt}>
           ${parseFloat((order.totalAmount as unknown) as string).toFixed(2)}
         </Text>
-        <Text style={styles.date}>{order.date.toDateString()}</Text>
+        <Text style={styles.date}>{new Date(order.date).toDateString()}</Text>
       </View>
       <Button
         title={showDetails ? "Hide Details" : "Show Details"}

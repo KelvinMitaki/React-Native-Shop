@@ -1,11 +1,12 @@
 import Order from "../../models/Order";
 import { AddOrder } from "../../screens/CartScreen";
+import { FetchOrders } from "../../screens/OrdersScreen";
 
 export interface OrderState {
   orders: Order[];
 }
 
-type Action = AddOrder;
+type Action = AddOrder | FetchOrders;
 
 const INITIAL_STATE: OrderState = {
   orders: []
@@ -13,10 +14,12 @@ const INITIAL_STATE: OrderState = {
 
 const orderReducer = (state = INITIAL_STATE, action: Action): OrderState => {
   switch (action.type) {
+    case "fetchOrders":
+      return { ...state, orders: action.payload };
     case "addOrder":
       return {
         ...state,
-        orders: [{ ...action.payload, id: action.payload.id! }, ...state.orders]
+        orders: [...state.orders, { ...action.payload, id: action.payload.id! }]
       };
     default:
       return state;

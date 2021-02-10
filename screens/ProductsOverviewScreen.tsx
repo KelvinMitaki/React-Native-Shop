@@ -20,7 +20,11 @@ import Product from "../models/Product";
 import { Button, Text } from "react-native-elements";
 import Colors from "../constants/Colors";
 import { NavigationDrawerProp } from "react-navigation-drawer";
-import { NavigationParams, NavigationRoute } from "react-navigation";
+import {
+  NavigationEvents,
+  NavigationParams,
+  NavigationRoute
+} from "react-navigation";
 import axios from "../axios/axios";
 
 export interface AddToCart {
@@ -42,21 +46,21 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
     products: { availableProducts }
   } = useSelector((state: Redux) => state);
   const dispatch = useDispatch();
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(async (shouldLoad?: boolean) => {
     try {
       setError(null);
-      setLoading(true);
+      shouldLoad && setLoading(true);
       let { data } = await axios.get("/products.json");
       data = Object.keys(data).map(key => ({ id: key, ...data[key] }));
       dispatch<FetchProducts>({ type: "fetchProducts", payload: data });
-      setLoading(false);
+      shouldLoad && setLoading(false);
     } catch (error) {
-      setLoading(false);
+      shouldLoad && setLoading(false);
       setError("An Error occured while fetching products");
     }
   }, []);
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(true);
   }, []);
   if (loading) {
     return (
@@ -91,11 +95,14 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
     );
   }
   return (
-    <FlatList
-      data={availableProducts}
-      keyExtractor={i => i.id}
-      renderItem={({ item }) => <ProductItem {...item} />}
-    />
+    <>
+      <NavigationEvents onWillFocus={() => fetchProducts()} />
+      <FlatList
+        data={availableProducts}
+        keyExtractor={i => i.id}
+        renderItem={({ item }) => <ProductItem {...item} />}
+      />
+    </>
   );
 };
 

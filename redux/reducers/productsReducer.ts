@@ -42,20 +42,20 @@ const productReducer = (
       return {
         ...state,
         availableProducts: [
+          ...state.availableProducts,
           {
             ...action.payload,
             id: action.payload.id!,
             price: parseFloat(action.payload.price)
-          },
-          ...state.availableProducts
+          }
         ],
         userProducts: [
+          ...state.availableProducts,
           {
             ...action.payload,
             id: action.payload.id!,
             price: parseFloat(action.payload.price)
-          },
-          ...state.availableProducts
+          }
         ]
       };
     case "editProduct":

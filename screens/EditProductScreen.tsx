@@ -284,7 +284,6 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
               if (newProduct && product && formIsValid) {
                 try {
                   const { data } = await axios.post("/products.json", product);
-                  console.log(data);
                   newProduct({
                     type: "addProduct",
                     payload: { ...product, id: data.name } as Prod

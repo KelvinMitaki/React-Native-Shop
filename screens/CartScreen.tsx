@@ -46,7 +46,7 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
         <Text
           style={{ fontWeight: "bold", fontSize: 20, color: Colors.primary }}
         >
-          Error placing order
+          {error}
         </Text>
         <Button
           title="Try Again"

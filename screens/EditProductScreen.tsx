@@ -8,7 +8,7 @@ import {
   Text,
   View
 } from "react-native";
-import { Input } from "react-native-elements";
+import { Button, Input } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import {
   HeaderButton,
@@ -101,8 +101,10 @@ const EditProductScreen: NavigationStackScreenComponent<{
   editProduct?: Dispatch<EditProduct>;
   formIsValid?: boolean;
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
+  setError?: React.Dispatch<React.SetStateAction<string | null>>;
 }> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const product = useSelector((state: Redux) =>
     state.products.userProducts.find(
       p => p.id === navigation.getParam("productId")
@@ -150,8 +152,8 @@ const EditProductScreen: NavigationStackScreenComponent<{
     });
   };
   useEffect(() => {
-    navigation.setParams({ setLoading });
-  }, [loading, setLoading]);
+    navigation.setParams({ setLoading, setError });
+  }, [loading, setLoading, error, setError]);
   useEffect(() => {
     if (!product) {
       // NEW PRODUCT
@@ -178,6 +180,27 @@ const EditProductScreen: NavigationStackScreenComponent<{
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text
+          style={{ fontSize: 20, fontWeight: "bold", color: Colors.primary }}
+        >
+          {error}
+        </Text>
+        <Button
+          title="Try Again"
+          onPress={() => navigation.popToTop()}
+          buttonStyle={{
+            padding: 10,
+            paddingHorizontal: 20,
+            backgroundColor: Colors.primary,
+            marginTop: 10
+          }}
+        />
       </View>
     );
   }
@@ -287,9 +310,17 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
               const product = navigation.getParam("product");
               const formIsValid = navigation.getParam("formIsValid");
               const setLoading = navigation.getParam("setLoading");
-              if (editProduct && product && formIsValid && setLoading) {
+              const setError = navigation.getParam("setError");
+              if (
+                editProduct &&
+                product &&
+                formIsValid &&
+                setLoading &&
+                setError
+              ) {
                 try {
                   setLoading(true);
+                  setError(null);
                   await axios.patch(`/products/${product.id}.json`, product);
                   editProduct({
                     type: "editProduct",
@@ -299,13 +330,21 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                   setLoading(false);
                 } catch (error) {
                   setLoading(false);
+                  setError("Error editing product");
                   console.log(error);
                 }
               }
               const newProduct = navigation.getParam("newProduct");
-              if (newProduct && product && formIsValid && setLoading) {
+              if (
+                newProduct &&
+                product &&
+                formIsValid &&
+                setLoading &&
+                setError
+              ) {
                 try {
                   setLoading(true);
+                  setError(null);
                   const { data } = await axios.post("/products.json", product);
                   newProduct({
                     type: "addProduct",
@@ -315,6 +354,7 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                   setLoading(false);
                 } catch (error) {
                   setLoading(false);
+                  setError("Error adding product");
                   console.log(error);
                 }
               }

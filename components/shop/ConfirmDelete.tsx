@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Overlay } from "react-native-elements";
 import { useDispatch } from "react-redux";
+import axios from "../../axios/axios";
 import Colors from "../../constants/Colors";
 import Product from "../../models/Product";
 import { DeleteItem } from "../../screens/UserProductsScreen";
@@ -18,12 +19,10 @@ const ConfirmDelete: React.FC<Props & Product> = ({
   id,
   ownerId
 }) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   return (
-    <Overlay
-      isVisible={confirmDelete}
-      onBackdropPress={() => setConfirmDelete(false)}
-    >
+    <Overlay isVisible={confirmDelete}>
       <View>
         <Text>
           Are You Sure You Want To Delete{" "}
@@ -40,15 +39,25 @@ const ConfirmDelete: React.FC<Props & Product> = ({
             title="Confirm"
             buttonStyle={styles.btn}
             containerStyle={{ width: "40%" }}
-            onPress={() => {
-              dispatch<DeleteItem>({
-                type: "deleteItem",
-                payload: {
-                  id,
-                  ownerId
-                }
-              });
-              setConfirmDelete(false);
+            loading={loading}
+            onPress={async () => {
+              try {
+                setLoading(true);
+                await axios.delete(`/products/${id}.json`);
+                dispatch<DeleteItem>({
+                  type: "deleteItem",
+                  payload: {
+                    id,
+                    ownerId
+                  }
+                });
+                setLoading(false);
+                setConfirmDelete(false);
+              } catch (error) {
+                setLoading(false);
+                setConfirmDelete(false);
+                console.log(error);
+              }
             }}
           />
         </View>

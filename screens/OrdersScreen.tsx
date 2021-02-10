@@ -7,11 +7,7 @@ import {
   Text,
   View
 } from "react-native";
-import {
-  NavigationEvents,
-  NavigationParams,
-  NavigationRoute
-} from "react-navigation";
+import { NavigationParams, NavigationRoute } from "react-navigation";
 import { NavigationDrawerProp } from "react-navigation-drawer";
 import {
   HeaderButton,
@@ -68,7 +64,6 @@ const OrdersScreen: NavigationStackScreenComponent = ({ navigation }) => {
   if (error) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <NavigationEvents onWillFocus={() => fetchOrders()} />
         <Text
           style={{ fontWeight: "bold", fontSize: 20, color: Colors.primary }}
         >

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ProductItem from "../components/shop/ProductItem";
 import { Redux } from "../interfaces/Redux";
 import Product from "../models/Product";
-import { Text } from "react-native-elements";
+import { Button, Text } from "react-native-elements";
 import Colors from "../constants/Colors";
 import { NavigationDrawerProp } from "react-navigation-drawer";
 import { NavigationParams, NavigationRoute } from "react-navigation";
@@ -37,22 +37,25 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
   quantity?: number;
 }> = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const {
     products: { availableProducts }
   } = useSelector((state: Redux) => state);
   const dispatch = useDispatch();
+  const fetchProducts = useCallback(async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      let { data } = await axios.get("/products.json");
+      data = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+      dispatch<FetchProducts>({ type: "fetchProducts", payload: data });
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      setError("An Error occured while fetching products");
+    }
+  }, []);
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        let { data } = await axios.get("/products.json");
-        data = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-        dispatch<FetchProducts>({ type: "fetchProducts", payload: data });
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
-    };
     fetchProducts();
   }, []);
   if (loading) {
@@ -68,6 +71,22 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
         <Text style={styles.noproducts}>
           No products found. Maybe start adding some!
         </Text>
+      </View>
+    );
+  }
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.noproducts}>{error}</Text>
+        <Button
+          title="Try Again"
+          buttonStyle={{
+            backgroundColor: Colors.primary,
+            marginTop: 10,
+            paddingHorizontal: 20
+          }}
+          onPress={() => fetchProducts()}
+        />
       </View>
     );
   }

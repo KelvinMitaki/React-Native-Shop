@@ -1,5 +1,12 @@
 import React, { useEffect, useReducer, useState } from "react";
-import { Alert, Platform, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import { Input } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
 import {
@@ -152,91 +159,95 @@ const EditProductScreen: NavigationStackScreenComponent<{
     }
   }, [title, description, imageUrl, price, formIsValid]);
   return (
-    <ScrollView>
-      <View style={{ marginTop: 40 }}>
-        <Input
-          value={title}
-          onBlur={() => updateFormInput(title, "title")}
-          onChangeText={t => updateFormInput(t, "title")}
-          placeholder="Title"
-          autoCapitalize="words"
-          errorMessage={!inputValidities.title ? "enter a valid title" : ""}
-          inputContainerStyle={{
-            ...(!inputValidities.title && {
-              borderBottomColor: "red"
-            })
-          }}
-          errorStyle={{
-            fontSize: 16,
-            fontWeight: "bold",
-            textTransform: "capitalize"
-          }}
-        />
-        <Input
-          value={imageUrl}
-          onBlur={() => updateFormInput(imageUrl, "imageUrl")}
-          onChangeText={t => updateFormInput(t, "imageUrl")}
-          placeholder="Image URL"
-          autoCapitalize="none"
-          errorMessage={
-            !inputValidities.imageUrl ? "enter a valid image url" : ""
-          }
-          inputContainerStyle={{
-            ...(!inputValidities.imageUrl && {
-              borderBottomColor: "red"
-            })
-          }}
-          errorStyle={{
-            fontSize: 16,
-            fontWeight: "bold",
-            textTransform: "capitalize"
-          }}
-        />
-        <Input
-          value={price.trim()}
-          onBlur={() => updateFormInput(price, "price")}
-          onChangeText={t =>
-            (/^\d+$/.test(t) ||
-              (!isNaN((t as unknown) as number) &&
-                t.toString().indexOf(".") != -1) ||
-              t === "") &&
-            updateFormInput(t, "price")
-          }
-          keyboardType="number-pad"
-          placeholder="Price in $"
-          errorMessage={!inputValidities.price ? "enter a valid price" : ""}
-          inputContainerStyle={{
-            ...(!inputValidities.price && {
-              borderBottomColor: "red"
-            })
-          }}
-          errorStyle={{
-            fontSize: 16,
-            fontWeight: "bold",
-            textTransform: "capitalize"
-          }}
-        />
-        <Input
-          value={description}
-          onBlur={() => updateFormInput(description, "description")}
-          onChangeText={t => updateFormInput(t, "description")}
-          placeholder="Description"
-          errorMessage={
-            !inputValidities.description ? "enter a valid description" : ""
-          }
-          inputContainerStyle={{
-            ...(!inputValidities.description && {
-              borderBottomColor: "red"
-            })
-          }}
-          errorStyle={{
-            fontSize: 16,
-            fontWeight: "bold",
-            textTransform: "capitalize"
-          }}
-        />
-      </View>
-    </ScrollView>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+      <ScrollView>
+        <View style={{ marginTop: 40 }}>
+          <Input
+            value={title}
+            onBlur={() => updateFormInput(title, "title")}
+            onChangeText={t => updateFormInput(t, "title")}
+            placeholder="Title"
+            autoCapitalize="words"
+            errorMessage={!inputValidities.title ? "enter a valid title" : ""}
+            inputContainerStyle={{
+              ...(!inputValidities.title && {
+                borderBottomColor: "red"
+              })
+            }}
+            errorStyle={{
+              fontSize: 16,
+              fontWeight: "bold",
+              textTransform: "capitalize"
+            }}
+          />
+          <Input
+            value={imageUrl}
+            onBlur={() => updateFormInput(imageUrl, "imageUrl")}
+            onChangeText={t => updateFormInput(t, "imageUrl")}
+            placeholder="Image URL"
+            autoCapitalize="none"
+            errorMessage={
+              !inputValidities.imageUrl ? "enter a valid image url" : ""
+            }
+            inputContainerStyle={{
+              ...(!inputValidities.imageUrl && {
+                borderBottomColor: "red"
+              })
+            }}
+            errorStyle={{
+              fontSize: 16,
+              fontWeight: "bold",
+              textTransform: "capitalize"
+            }}
+          />
+          <Input
+            value={price.trim()}
+            onBlur={() => updateFormInput(price, "price")}
+            onChangeText={t =>
+              (/^\d+$/.test(t) ||
+                (!isNaN((t as unknown) as number) &&
+                  t.toString().indexOf(".") != -1) ||
+                t === "") &&
+              updateFormInput(t, "price")
+            }
+            keyboardType="number-pad"
+            placeholder="Price in $"
+            errorMessage={!inputValidities.price ? "enter a valid price" : ""}
+            inputContainerStyle={{
+              ...(!inputValidities.price && {
+                borderBottomColor: "red"
+              })
+            }}
+            errorStyle={{
+              fontSize: 16,
+              fontWeight: "bold",
+              textTransform: "capitalize"
+            }}
+          />
+          <Input
+            value={description}
+            onBlur={() => updateFormInput(description, "description")}
+            onChangeText={t => updateFormInput(t, "description")}
+            placeholder="Description"
+            errorMessage={
+              !inputValidities.description ? "enter a valid description" : ""
+            }
+            inputContainerStyle={{
+              ...(!inputValidities.description && {
+                borderBottomColor: "red"
+              })
+            }}
+            errorStyle={{
+              fontSize: 16,
+              fontWeight: "bold",
+              textTransform: "capitalize"
+            }}
+            multiline
+            numberOfLines={3}
+          />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -35,7 +35,9 @@ const ProductDetailsScreen: NavigationStackScreenComponent<{
           dispatch<AddToCart>({ type: "addToCart", payload: prod! })
         }
       />
-      <Text style={styles.price}>${prod?.price.toFixed(2)}</Text>
+      <Text style={styles.price}>
+        ${parseFloat((prod?.price as unknown) as string).toFixed(2)}
+      </Text>
       <Text style={styles.description}>{prod?.description}</Text>
     </ScrollView>
   );

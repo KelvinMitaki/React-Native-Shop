@@ -7,7 +7,7 @@ import {
   Item
 } from "react-navigation-header-buttons";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProductItem from "../components/shop/ProductItem";
 import { Redux } from "../interfaces/Redux";
 import Product from "../models/Product";
@@ -15,6 +15,7 @@ import { Text } from "react-native-elements";
 import Colors from "../constants/Colors";
 import { NavigationDrawerProp } from "react-navigation-drawer";
 import { NavigationParams, NavigationRoute } from "react-navigation";
+import axios from "../axios/axios";
 
 export interface AddToCart {
   type: "addToCart";
@@ -32,7 +33,15 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
   const {
     products: { availableProducts }
   } = useSelector((state: Redux) => state);
-
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const fetchProducts = async () => {
+      let { data } = await axios.get("/products.json");
+      data = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+      dispatch<FetchProducts>({ type: "fetchProducts", payload: data });
+    };
+    fetchProducts();
+  }, []);
   return (
     <FlatList
       data={availableProducts}

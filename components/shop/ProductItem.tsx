@@ -58,7 +58,10 @@ const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
         <Image source={{ uri: prod.imageUrl }} style={styles.image} />
         <Text style={styles.title}>{prod.title}</Text>
         <Text style={styles.price}>
-          ${prod.price.toFixed(2).toLocaleString()}
+          $
+          {parseFloat((prod.price as unknown) as string)
+            .toFixed(2)
+            .toLocaleString()}
         </Text>
         <View style={styles.btnPrt}>
           {isAdmin ? (

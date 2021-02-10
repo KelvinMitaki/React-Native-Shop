@@ -32,7 +32,10 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
     <View>
       <View style={styles.order}>
         <Text style={styles.pricePrt}>
-          Total: <Text style={styles.price}>{totalAmount.toFixed(2)}</Text>
+          Total:{" "}
+          <Text style={styles.price}>
+            {parseFloat((totalAmount as unknown) as string).toFixed(2)}
+          </Text>
         </Text>
         <Button
           title="Order Now"

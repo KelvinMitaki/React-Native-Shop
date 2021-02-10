@@ -1,6 +1,7 @@
 import PRODUCTS from "../../data/dummy-data";
 import Product from "../../models/Product";
 import { AddNewProduct, EditProduct } from "../../screens/EditProductScreen";
+import { FetchProducts } from "../../screens/ProductsOverviewScreen";
 import { DeleteItem } from "../../screens/UserProductsScreen";
 
 export interface ProductsState {
@@ -8,7 +9,7 @@ export interface ProductsState {
   userProducts: Product[];
 }
 
-type Action = DeleteItem | AddNewProduct | EditProduct;
+type Action = DeleteItem | AddNewProduct | EditProduct | FetchProducts;
 
 const INITIAL_STATE: ProductsState = {
   availableProducts: PRODUCTS,
@@ -20,6 +21,8 @@ const productReducer = (
   action: Action
 ): ProductsState => {
   switch (action.type) {
+    case "fetchProducts":
+      return { ...state, availableProducts: action.payload };
     case "deleteItem":
       const { id, ownerId } = action.payload;
       return {

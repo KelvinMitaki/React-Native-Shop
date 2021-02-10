@@ -21,6 +21,11 @@ export interface AddToCart {
   payload: Product;
 }
 
+export interface FetchProducts {
+  type: "fetchProducts";
+  payload: Product[];
+}
+
 const ProductsOverviewScreen: NavigationStackScreenComponent<{
   quantity?: number;
 }> = () => {

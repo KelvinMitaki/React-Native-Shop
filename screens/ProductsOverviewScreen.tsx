@@ -1,5 +1,11 @@
-import React, { useEffect } from "react";
-import { FlatList, Platform, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Platform,
+  StyleSheet,
+  View
+} from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import {
   HeaderButton,
@@ -30,18 +36,41 @@ export interface FetchProducts {
 const ProductsOverviewScreen: NavigationStackScreenComponent<{
   quantity?: number;
 }> = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const {
     products: { availableProducts }
   } = useSelector((state: Redux) => state);
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchProducts = async () => {
-      let { data } = await axios.get("/products.json");
-      data = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-      dispatch<FetchProducts>({ type: "fetchProducts", payload: data });
+      try {
+        setLoading(true);
+        let { data } = await axios.get("/products.json");
+        data = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        dispatch<FetchProducts>({ type: "fetchProducts", payload: data });
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
     };
     fetchProducts();
   }, []);
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+  if (!loading && availableProducts.length === 0) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.noproducts}>
+          No products found. Maybe start adding some!
+        </Text>
+      </View>
+    );
+  }
   return (
     <FlatList
       data={availableProducts}
@@ -94,4 +123,16 @@ ProductsOverviewScreen.navigationOptions = ({ navigation }) => ({
 
 export default ProductsOverviewScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  noproducts: {
+    fontSize: 20,
+    color: Colors.primary,
+    fontWeight: "bold",
+    textAlign: "center"
+  }
+});

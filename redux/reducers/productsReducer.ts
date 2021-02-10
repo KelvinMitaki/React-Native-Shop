@@ -22,7 +22,11 @@ const productReducer = (
 ): ProductsState => {
   switch (action.type) {
     case "fetchProducts":
-      return { ...state, availableProducts: action.payload };
+      return {
+        ...state,
+        availableProducts: action.payload,
+        userProducts: action.payload.filter(p => p.ownerId === "u1")
+      };
     case "deleteItem":
       const { id, ownerId } = action.payload;
       return {
@@ -41,7 +45,6 @@ const productReducer = (
           {
             ...action.payload,
             id: action.payload.id!,
-            ownerId: "u1",
             price: parseFloat(action.payload.price)
           },
           ...state.availableProducts
@@ -50,7 +53,6 @@ const productReducer = (
           {
             ...action.payload,
             id: action.payload.id!,
-            ownerId: "u1",
             price: parseFloat(action.payload.price)
           },
           ...state.availableProducts

@@ -28,6 +28,7 @@ interface Prod {
   imageUrl: string;
   price: string;
   description: string;
+  ownerId: "u1";
   id?: string;
 }
 interface Valid {
@@ -150,12 +151,19 @@ const EditProductScreen: NavigationStackScreenComponent<{
       // NEW PRODUCT
       navigation.setParams({ newProduct: dispatch, formIsValid });
       navigation.setParams({
-        product: { title, description, imageUrl, price }
+        product: { title, description, imageUrl, price, ownerId: "u1" }
       });
     } else {
       // EDIT PRODUCT
       navigation.setParams({
-        product: { ...product, title, description, imageUrl, price }
+        product: {
+          ...product,
+          title,
+          description,
+          imageUrl,
+          price,
+          ownerId: "u1"
+        }
       });
       navigation.setParams({ editProduct: dispatch, formIsValid });
     }

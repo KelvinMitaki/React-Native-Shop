@@ -16,10 +16,7 @@ const orderReducer = (state = INITIAL_STATE, action: Action): OrderState => {
     case "addOrder":
       return {
         ...state,
-        orders: [
-          { id: new Date().toString(), date: new Date(), ...action.payload },
-          ...state.orders
-        ]
+        orders: [{ ...action.payload, id: action.payload.id! }, ...state.orders]
       };
     default:
       return state;

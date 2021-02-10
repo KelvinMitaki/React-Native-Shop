@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-elements";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "../axios/axios";
 import CartItemComponent from "../components/shop/CartItem";
 import Colors from "../constants/Colors";
 import { Redux } from "../interfaces/Redux";
@@ -18,6 +19,8 @@ export interface AddOrder {
   payload: {
     items: CartItem[];
     totalAmount: number;
+    id?: string;
+    date: Date;
   };
 }
 
@@ -41,10 +44,16 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
           title="Order Now"
           buttonStyle={styles.btn}
           disabled={!items.length}
-          onPress={() => {
+          onPress={async () => {
+            const date = new Date();
+            const { data } = await axios.post("/orders.json", {
+              items,
+              totalAmount,
+              date
+            });
             dispatch<AddOrder>({
               type: "addOrder",
-              payload: { items, totalAmount }
+              payload: { items, totalAmount, date, id: data.name }
             });
             dispatch<ClearCart>({ type: "clearCart" });
             navigation.navigate("Orders");

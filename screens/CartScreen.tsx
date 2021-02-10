@@ -1,5 +1,5 @@
-import React from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-elements";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,8 +29,38 @@ export interface ClearCart {
 }
 
 const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
   const { items, totalAmount } = useSelector((state: Redux) => state.cart);
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text
+          style={{ fontWeight: "bold", fontSize: 20, color: Colors.primary }}
+        >
+          Error placing order
+        </Text>
+        <Button
+          title="Try Again"
+          onPress={() => setError(null)}
+          buttonStyle={{
+            padding: 10,
+            paddingHorizontal: 20,
+            backgroundColor: Colors.primary,
+            marginTop: 10
+          }}
+        />
+      </View>
+    );
+  }
   return (
     <View>
       <View style={styles.order}>
@@ -45,18 +75,27 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
           buttonStyle={styles.btn}
           disabled={!items.length}
           onPress={async () => {
-            const date = new Date();
-            const { data } = await axios.post("/orders.json", {
-              items,
-              totalAmount,
-              date
-            });
-            dispatch<AddOrder>({
-              type: "addOrder",
-              payload: { items, totalAmount, date, id: data.name }
-            });
-            dispatch<ClearCart>({ type: "clearCart" });
-            navigation.navigate("Orders");
+            try {
+              setLoading(true);
+              setError(null);
+              const date = new Date();
+              const { data } = await axios.post("/orders.json", {
+                items,
+                totalAmount,
+                date
+              });
+              dispatch<AddOrder>({
+                type: "addOrder",
+                payload: { items, totalAmount, date, id: data.name }
+              });
+              dispatch<ClearCart>({ type: "clearCart" });
+              navigation.navigate("Orders");
+              setLoading(false);
+            } catch (error) {
+              setLoading(false);
+              setError("Error placing order");
+              console.log(error);
+            }
           }}
         />
       </View>

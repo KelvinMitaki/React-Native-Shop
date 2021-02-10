@@ -1,5 +1,6 @@
 import React, { useEffect, useReducer, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -99,7 +100,9 @@ const EditProductScreen: NavigationStackScreenComponent<{
   newProduct?: Dispatch<AddNewProduct>;
   editProduct?: Dispatch<EditProduct>;
   formIsValid?: boolean;
+  setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ navigation }) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const product = useSelector((state: Redux) =>
     state.products.userProducts.find(
       p => p.id === navigation.getParam("productId")
@@ -147,6 +150,9 @@ const EditProductScreen: NavigationStackScreenComponent<{
     });
   };
   useEffect(() => {
+    navigation.setParams({ setLoading });
+  }, [loading, setLoading]);
+  useEffect(() => {
     if (!product) {
       // NEW PRODUCT
       navigation.setParams({ newProduct: dispatch, formIsValid });
@@ -168,6 +174,13 @@ const EditProductScreen: NavigationStackScreenComponent<{
       navigation.setParams({ editProduct: dispatch, formIsValid });
     }
   }, [title, description, imageUrl, price, formIsValid]);
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
       <ScrollView>
@@ -273,24 +286,35 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
               const editProduct = navigation.getParam("editProduct");
               const product = navigation.getParam("product");
               const formIsValid = navigation.getParam("formIsValid");
-              if (editProduct && product && formIsValid) {
-                await axios.patch(`/products/${product.id}.json`, product);
-                editProduct({
-                  type: "editProduct",
-                  payload: product as Product
-                });
-                navigation.popToTop();
+              const setLoading = navigation.getParam("setLoading");
+              if (editProduct && product && formIsValid && setLoading) {
+                try {
+                  setLoading(true);
+                  await axios.patch(`/products/${product.id}.json`, product);
+                  editProduct({
+                    type: "editProduct",
+                    payload: product as Product
+                  });
+                  navigation.popToTop();
+                  setLoading(false);
+                } catch (error) {
+                  setLoading(false);
+                  console.log(error);
+                }
               }
               const newProduct = navigation.getParam("newProduct");
-              if (newProduct && product && formIsValid) {
+              if (newProduct && product && formIsValid && setLoading) {
                 try {
+                  setLoading(true);
                   const { data } = await axios.post("/products.json", product);
                   newProduct({
                     type: "addProduct",
                     payload: { ...product, id: data.name } as Prod
                   });
                   navigation.popToTop();
+                  setLoading(false);
                 } catch (error) {
+                  setLoading(false);
                   console.log(error);
                 }
               }

@@ -118,7 +118,6 @@ const switchNavigator = createSwitchNavigator({
   ),
   Main: drawerNavigator
 });
-
 const App = createAppContainer(switchNavigator);
 
 export default () => (

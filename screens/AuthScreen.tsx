@@ -19,9 +19,12 @@ import {
   StackNavigationOptions,
   StackNavigationProp
 } from "react-navigation-stack/lib/typescript/src/vendor/types";
+import { useSelector } from "react-redux";
 import { Field, InjectedFormProps, reduxForm } from "redux-form";
+import axios from "../axios/axios";
 import Colors from "../constants/Colors";
 import FormInput from "../forms/Input";
+import { Redux } from "../interfaces/Redux";
 
 interface FormValues {
   email: string;
@@ -37,6 +40,22 @@ const AuthScreen: React.FC<
     ScreenProps
   >;
 } = props => {
+  const { form } = useSelector((state: Redux) => state);
+  const signup = async () => {
+    try {
+      const { data } = await axios.post(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${process.env.EXPO_FIREBASE}`,
+        form.AuthScreen.values
+      );
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  props.handleSubmit(f => {
+    console.log(f);
+  });
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <LinearGradient colors={["#ffedff", "#ffe3ff"]}>
@@ -44,16 +63,24 @@ const AuthScreen: React.FC<
           <KeyboardAvoidingView behavior="padding" style={{ width: "100%" }}>
             <Card containerStyle={styles.card}>
               <ScrollView>
-                <Field component={FormInput} name="email" placeholder="Email" />
+                <Field
+                  component={FormInput}
+                  name="email"
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
                 <Field
                   component={FormInput}
                   name="password"
                   placeholder="Password"
+                  secureTextEntry
                 />
                 <Button
                   title="Submit"
                   buttonStyle={styles.btn}
                   disabled={props.invalid}
+                  onPress={signup}
                 />
                 <Button
                   title="Switch to sign up"

@@ -6,4 +6,5 @@ export interface Redux {
   products: ProductsState;
   cart: CartState;
   order: OrderState;
+  form: any;
 }

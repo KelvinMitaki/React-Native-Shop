@@ -101,6 +101,8 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
         data={availableProducts}
         keyExtractor={i => i.id}
         renderItem={({ item }) => <ProductItem {...item} />}
+        onRefresh={fetchProducts}
+        refreshing={loading}
       />
     </>
   );

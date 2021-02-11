@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
   StyleSheet,
@@ -38,33 +39,35 @@ const AuthScreen: React.FC<
 } = props => {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.prt}>
-        <KeyboardAvoidingView behavior="padding" style={{ width: "100%" }}>
-          <Card containerStyle={styles.card}>
-            <ScrollView>
-              <Field component={FormInput} name="email" placeholder="Email" />
-              <Field
-                component={FormInput}
-                name="password"
-                placeholder="Password"
-              />
-              <Button
-                title="Submit"
-                buttonStyle={styles.btn}
-                disabled={props.invalid}
-              />
-              <Button
-                title="Switch to sign up"
-                buttonStyle={{
-                  ...styles.btn,
-                  backgroundColor: Colors.accent,
-                  marginTop: 10
-                }}
-              />
-            </ScrollView>
-          </Card>
-        </KeyboardAvoidingView>
-      </View>
+      <LinearGradient colors={["#ffedff", "#ffe3ff"]}>
+        <View style={styles.prt}>
+          <KeyboardAvoidingView behavior="padding" style={{ width: "100%" }}>
+            <Card containerStyle={styles.card}>
+              <ScrollView>
+                <Field component={FormInput} name="email" placeholder="Email" />
+                <Field
+                  component={FormInput}
+                  name="password"
+                  placeholder="Password"
+                />
+                <Button
+                  title="Submit"
+                  buttonStyle={styles.btn}
+                  disabled={props.invalid}
+                />
+                <Button
+                  title="Switch to sign up"
+                  buttonStyle={{
+                    ...styles.btn,
+                    backgroundColor: Colors.accent,
+                    marginTop: 10
+                  }}
+                />
+              </ScrollView>
+            </Card>
+          </KeyboardAvoidingView>
+        </View>
+      </LinearGradient>
     </TouchableWithoutFeedback>
   );
 };

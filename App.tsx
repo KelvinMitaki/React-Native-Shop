@@ -109,9 +109,12 @@ const drawerNavigator = createDrawerNavigator(
 );
 
 const switchNavigator = createSwitchNavigator({
-  Auth: createStackNavigator({
-    SignIn: AuthScreen
-  }),
+  Auth: createStackNavigator(
+    {
+      SignIn: AuthScreen
+    },
+    options
+  ),
   Main: drawerNavigator
 });
 

@@ -1,5 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -32,30 +32,40 @@ interface FormValues {
 }
 
 const AuthScreen: React.FC<
-  InjectedFormProps<FormValues, NavigationStackScreenProps>
+  InjectedFormProps<
+    FormValues,
+    NavigationStackScreenProps<{ auth: "signup" | "signin" }>
+  > &
+    NavigationStackScreenProps<{ auth: "signup" | "signin" }>
 > & {
   navigationOptions?: NavigationScreenConfig<
     StackNavigationOptions,
-    StackNavigationProp<NavigationRoute, {}>,
+    StackNavigationProp<NavigationRoute, { auth: "signup" | "signin" }>,
     ScreenProps
   >;
 } = props => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [auth, setAuth] = useState<"signup" | "signin">("signin");
+  useEffect(() => {
+    props.navigation.setParams({ auth });
+  }, [auth]);
   const { form } = useSelector((state: Redux) => state);
   const signup = async () => {
     try {
-      const { data } = await axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${process.env.EXPO_FIREBASE}`,
-        form.AuthScreen.values
+      setLoading(true);
+      const {
+        data
+      } = await axios.post(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.EXPO_FIREBASE}`,
+        { ...form.AuthScreen.values, returnSecureToken: true }
       );
+      setLoading(false);
       console.log(data);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
-  props.handleSubmit(f => {
-    console.log(f);
-  });
-
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <LinearGradient colors={["#ffedff", "#ffe3ff"]}>
@@ -81,14 +91,20 @@ const AuthScreen: React.FC<
                   buttonStyle={styles.btn}
                   disabled={props.invalid}
                   onPress={signup}
+                  loading={loading}
                 />
                 <Button
-                  title="Switch to sign up"
+                  title={`Switch to ${
+                    auth === "signup" ? "Sign in" : "Sign up"
+                  }`}
                   buttonStyle={{
                     ...styles.btn,
                     backgroundColor: Colors.accent,
                     marginTop: 10
                   }}
+                  onPress={() =>
+                    setAuth(au => (au === "signin" ? "signup" : "signin"))
+                  }
                 />
               </ScrollView>
             </Card>
@@ -112,11 +128,14 @@ const validate = (formvalues: FormValues) => {
   return errors;
 };
 
-AuthScreen.navigationOptions = {
-  headerTitle: "Sign In"
-};
+AuthScreen.navigationOptions = ({ navigation }) => ({
+  headerTitle: navigation.getParam("auth") === "signin" ? "Sign In" : "Sign Up"
+});
 
-export default reduxForm<FormValues, NavigationStackScreenProps>({
+export default reduxForm<
+  FormValues,
+  NavigationStackScreenProps<{ auth: "signup" | "signin" }>
+>({
   form: "AuthScreen",
   validate
 })(AuthScreen);

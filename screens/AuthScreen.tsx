@@ -107,6 +107,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     alignSelf: "center",
     padding: 10,
-    width: "60%"
+    width: "100%"
   }
 });

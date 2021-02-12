@@ -23,6 +23,7 @@ import { Button } from "react-native-elements";
 import Colors from "../constants/Colors";
 import axios from "../axios/axios";
 import Order from "../models/Order";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export interface FetchOrders {
   type: "fetchOrders";
@@ -54,6 +55,7 @@ const OrdersScreen: NavigationStackScreenComponent = ({ navigation }) => {
       setError("Error fetching orders");
       console.log(error);
       if (error.response.status === 401) {
+        await AsyncStorage.removeItem("userData");
         navigation.navigate("Auth");
       }
     }

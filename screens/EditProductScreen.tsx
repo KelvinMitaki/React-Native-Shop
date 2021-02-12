@@ -23,6 +23,7 @@ import { Redux } from "../interfaces/Redux";
 import Product from "../models/Product";
 import { Dispatch } from "redux";
 import axios from "../axios/axios";
+import AsyncStorage from "@react-native-community/async-storage";
 
 interface Prod {
   title: string;
@@ -342,6 +343,7 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                   setError("Error editing product");
                   console.log(error);
                   if (error.response.status === 401) {
+                    await AsyncStorage.removeItem("userData");
                     navigation.navigate("Auth");
                   }
                 }
@@ -375,6 +377,7 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                   setError("Error adding product");
                   console.log(error);
                   if (error.response.status === 401) {
+                    await AsyncStorage.removeItem("userData");
                     navigation.navigate("Auth");
                   }
                 }

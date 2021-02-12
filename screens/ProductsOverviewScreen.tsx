@@ -26,6 +26,7 @@ import {
   NavigationRoute
 } from "react-navigation";
 import axios from "../axios/axios";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export interface AddToCart {
   type: "addToCart";
@@ -62,6 +63,7 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
       shouldLoad ? setLoading(false) : setRefresh(false);
       setError("An Error occured while fetching products");
       if (error.response.status === 401) {
+        await AsyncStorage.removeItem("userData");
         navigation.navigate("Auth");
       }
     }

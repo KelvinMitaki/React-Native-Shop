@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-community/async-storage";
 import React, { useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-elements";
@@ -102,6 +103,7 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
               setError("Error placing order");
               console.log(error);
               if (error.response.status === 401) {
+                await AsyncStorage.removeItem("userData");
                 navigation.navigate("Auth");
               }
             }

@@ -17,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import ProductItem from "../components/shop/ProductItem";
 import Colors from "../constants/Colors";
 import { Redux } from "../interfaces/Redux";
+import { Button } from "react-native-elements";
 
 export interface DeleteItem {
   type: "deleteItem";
@@ -31,12 +32,33 @@ export interface SetUserProducts {
   payload: string;
 }
 
-const UserProductsScreen: NavigationStackScreenComponent = () => {
+const UserProductsScreen: NavigationStackScreenComponent = ({ navigation }) => {
   const dispatch = useDispatch();
   const {
     products: { userProducts },
     auth: { userId }
   } = useSelector((state: Redux) => state);
+
+  if (!userProducts.length) {
+    return (
+      <View style={styles.noproducts}>
+        <Text
+          style={{ fontSize: 20, fontWeight: "bold", color: Colors.primary }}
+        >
+          No Products found
+        </Text>
+        <Button
+          title="Add Product"
+          onPress={() => navigation.navigate("EditProduct")}
+          buttonStyle={{
+            backgroundColor: Colors.primary,
+            marginTop: 10,
+            paddingHorizontal: 40
+          }}
+        />
+      </View>
+    );
+  }
   return (
     <View>
       <NavigationEvents
@@ -100,4 +122,10 @@ UserProductsScreen.navigationOptions = ({ navigation }) => ({
 });
 export default UserProductsScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  noproducts: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  }
+});

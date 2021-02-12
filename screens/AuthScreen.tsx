@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-community/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import {
@@ -46,6 +47,14 @@ export interface SignIn {
   };
 }
 
+const saveDataToStorage = async (data: {
+  token: string;
+  userId: string;
+  expiryDate: string;
+}) => {
+  await AsyncStorage.setItem("userData", JSON.stringify(data));
+};
+
 const AuthScreen: React.FC<
   InjectedFormProps<
     FormValues,
@@ -80,15 +89,21 @@ const AuthScreen: React.FC<
         { ...form.AuthScreen.values, returnSecureToken: true }
       );
       setLoading(false);
+      const token = data.idToken;
+      const userId = data.localId;
+      const expiryDate = new Date(
+        new Date().getTime() + parseInt(data.expiresIn) * 1000
+      ).toISOString();
+      saveDataToStorage({ expiryDate, token, userId });
       if (auth === "signin") {
         dispatch<SignIn>({
           type: "signin",
-          payload: { token: data.idToken, userId: data.localId }
+          payload: { token, userId }
         });
       } else {
         dispatch<SignUp>({
           type: "signup",
-          payload: { token: data.idToken, userId: data.localId }
+          payload: { token, userId }
         });
       }
       props.navigation.navigate("Main");

@@ -42,6 +42,14 @@ const UserProductsScreen: NavigationStackScreenComponent = ({ navigation }) => {
   if (!userProducts.length) {
     return (
       <View style={styles.noproducts}>
+        <NavigationEvents
+          onWillFocus={() =>
+            dispatch<SetUserProducts>({
+              type: "setUserProducts",
+              payload: userId!
+            })
+          }
+        />
         <Text
           style={{ fontSize: 20, fontWeight: "bold", color: Colors.primary }}
         >

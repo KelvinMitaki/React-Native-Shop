@@ -46,24 +46,33 @@ const AuthScreen: React.FC<
 } = props => {
   const [loading, setLoading] = useState<boolean>(false);
   const [auth, setAuth] = useState<"signup" | "signin">("signin");
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     props.navigation.setParams({ auth });
   }, [auth]);
   const { form } = useSelector((state: Redux) => state);
-  const signup = async () => {
+  const authenticate = async () => {
     try {
+      setError(null);
       setLoading(true);
       const {
         data
       } = await axios.post(
-        `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${process.env.EXPO_FIREBASE}`,
+        `https://identitytoolkit.googleapis.com/v1/accounts:${
+          auth === "signin" ? "signInWithPassword" : "signUp"
+        }?key=${process.env.EXPO_FIREBASE}`,
         { ...form.AuthScreen.values, returnSecureToken: true }
       );
       setLoading(false);
       console.log(data);
     } catch (error) {
+      if (auth === "signin") {
+        setError("Invalid email or password");
+      } else {
+        setError("Email already in use");
+      }
       setLoading(false);
-      console.log(error);
+      // console.log(error.response.data);
     }
   };
   return (
@@ -86,11 +95,12 @@ const AuthScreen: React.FC<
                   placeholder="Password"
                   secureTextEntry
                 />
+                {error && <Text style={styles.error}>{error}</Text>}
                 <Button
                   title="Submit"
                   buttonStyle={styles.btn}
                   disabled={props.invalid}
-                  onPress={signup}
+                  onPress={authenticate}
                   loading={loading}
                 />
                 <Button
@@ -154,5 +164,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: 10,
     width: "100%"
+  },
+  error: {
+    color: "red",
+    fontWeight: "bold",
+    paddingHorizontal: 15,
+    transform: [{ translateY: -20 }]
   }
 });

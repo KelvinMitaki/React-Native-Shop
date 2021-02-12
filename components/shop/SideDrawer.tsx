@@ -12,26 +12,31 @@ import {
   DrawerItems,
   NavigationDrawerState
 } from "react-navigation-drawer";
+import { useDispatch } from "react-redux";
+import { Dispatch } from "redux";
 import Colors from "../../constants/Colors";
 
 export interface Logout {
   type: "logout";
 }
 const logout = async (
-  navigation: NavigationScreenProp<NavigationDrawerState, NavigationParams>
+  navigation: NavigationScreenProp<NavigationDrawerState, NavigationParams>,
+  dispatch: Dispatch<Logout>
 ) => {
+  dispatch({ type: "logout" });
   navigation.navigate("Auth");
   await AsyncStorage.removeItem("userData");
 };
 
 const SideDrawer: React.FC<DrawerContentComponentProps> = props => {
+  const dispatch = useDispatch();
   return (
     <View>
       <SafeAreaView forceInset={{ top: "always", horizontal: "never" }}>
         <DrawerItems {...props} />
         <Button
           title="Logout"
-          onPress={() => logout(props.navigation)}
+          onPress={() => logout(props.navigation, dispatch)}
           buttonStyle={styles.btn}
         />
       </SafeAreaView>

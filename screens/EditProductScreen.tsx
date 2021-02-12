@@ -155,12 +155,12 @@ const EditProductScreen: NavigationStackScreenComponent<{
     });
   };
   useEffect(() => {
-    navigation.setParams({ setLoading, setError });
+    navigation.setParams({ setLoading, setError, token });
   }, [loading, setLoading, error, setError]);
   useEffect(() => {
     if (!product) {
       // NEW PRODUCT
-      navigation.setParams({ newProduct: dispatch, formIsValid, token });
+      navigation.setParams({ newProduct: dispatch, formIsValid });
       navigation.setParams({
         product: { title, description, imageUrl, price, ownerId: "u1" }
       });

@@ -52,8 +52,10 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
       setError(null);
       shouldLoad && setLoading(true);
       let { data } = await axios.get(`/products.json?auth=${token}`);
-      data = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-      dispatch<FetchProducts>({ type: "fetchProducts", payload: data });
+      if (data && typeof data === "object") {
+        data = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        dispatch<FetchProducts>({ type: "fetchProducts", payload: data });
+      }
       shouldLoad && setLoading(false);
     } catch (error) {
       shouldLoad && setLoading(false);

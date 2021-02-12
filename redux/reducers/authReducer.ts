@@ -1,3 +1,4 @@
+import { Logout } from "../../components/shop/SideDrawer";
 import { SignIn, SignUp } from "../../screens/AuthScreen";
 
 export interface AuthState {
@@ -5,7 +6,7 @@ export interface AuthState {
   userId: string | null;
 }
 
-type Action = SignIn | SignUp;
+type Action = SignIn | SignUp | Logout;
 
 const INITIAL_STATE: AuthState = {
   token: null,
@@ -18,6 +19,8 @@ const authReducer = (state = INITIAL_STATE, action: Action): AuthState => {
       return { ...state, ...action.payload };
     case "signin":
       return { ...state, ...action.payload };
+    case "logout":
+      return { ...state, token: null, userId: null };
     default:
       return state;
   }

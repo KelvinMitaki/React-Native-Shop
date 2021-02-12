@@ -102,13 +102,16 @@ const EditProductScreen: NavigationStackScreenComponent<{
   formIsValid?: boolean;
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
   setError?: React.Dispatch<React.SetStateAction<string | null>>;
+  token?: string | null;
 }> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const product = useSelector((state: Redux) =>
-    state.products.userProducts.find(
-      p => p.id === navigation.getParam("productId")
-    )
+  const {
+    products,
+    auth: { token }
+  } = useSelector((state: Redux) => state);
+  const product = products.userProducts.find(
+    p => p.id === navigation.getParam("productId")
   );
   const dispatch = useDispatch();
   const [state, reactDispatch] = useReducer(reducer, {
@@ -157,7 +160,7 @@ const EditProductScreen: NavigationStackScreenComponent<{
   useEffect(() => {
     if (!product) {
       // NEW PRODUCT
-      navigation.setParams({ newProduct: dispatch, formIsValid });
+      navigation.setParams({ newProduct: dispatch, formIsValid, token });
       navigation.setParams({
         product: { title, description, imageUrl, price, ownerId: "u1" }
       });
@@ -311,6 +314,7 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
               const formIsValid = navigation.getParam("formIsValid");
               const setLoading = navigation.getParam("setLoading");
               const setError = navigation.getParam("setError");
+              const token = navigation.getParam("token");
               if (
                 editProduct &&
                 product &&
@@ -321,7 +325,10 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                 try {
                   setLoading(true);
                   setError(null);
-                  await axios.patch(`/products/${product.id}.json`, product);
+                  await axios.patch(
+                    `/products/${product.id}.json?auth=${token}`,
+                    product
+                  );
                   editProduct({
                     type: "editProduct",
                     payload: product as Product
@@ -345,7 +352,10 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                 try {
                   setLoading(true);
                   setError(null);
-                  const { data } = await axios.post("/products.json", product);
+                  const { data } = await axios.post(
+                    `/products.json?auth=${token}`,
+                    product
+                  );
                   newProduct({
                     type: "addProduct",
                     payload: { ...product, id: data.name } as Prod

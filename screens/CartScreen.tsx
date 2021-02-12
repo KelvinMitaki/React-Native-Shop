@@ -32,7 +32,10 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
-  const { items, totalAmount } = useSelector((state: Redux) => state.cart);
+  const {
+    cart: { items, totalAmount },
+    auth: { token }
+  } = useSelector((state: Redux) => state);
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -79,7 +82,7 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
               setLoading(true);
               setError(null);
               const date = new Date();
-              const { data } = await axios.post("/orders.json", {
+              const { data } = await axios.post(`/orders.json?auth=${token}`, {
                 items,
                 totalAmount,
                 date

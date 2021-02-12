@@ -33,12 +33,15 @@ const OrdersScreen: NavigationStackScreenComponent = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const dispatch = useDispatch();
-  const { orders } = useSelector((state: Redux) => state.order);
+  const {
+    order: { orders },
+    auth: { token }
+  } = useSelector((state: Redux) => state);
   const fetchOrders = useCallback(async (shouldLoad?: boolean) => {
     try {
       shouldLoad && setLoading(true);
       setError(null);
-      const { data } = await axios.get("/orders.json");
+      const { data } = await axios.get(`/orders.json?auth=${token}`);
       dispatch<FetchOrders>({
         type: "fetchOrders",
         payload: Object.keys(data).map(key => ({ id: key, ...data[key] }))

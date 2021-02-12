@@ -43,14 +43,15 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const {
-    products: { availableProducts }
+    products: { availableProducts },
+    auth: { token }
   } = useSelector((state: Redux) => state);
   const dispatch = useDispatch();
   const fetchProducts = useCallback(async (shouldLoad?: boolean) => {
     try {
       setError(null);
       shouldLoad && setLoading(true);
-      let { data } = await axios.get("/products.json");
+      let { data } = await axios.get(`/products.json?auth=${token}`);
       data = Object.keys(data).map(key => ({ id: key, ...data[key] }));
       dispatch<FetchProducts>({ type: "fetchProducts", payload: data });
       shouldLoad && setLoading(false);

@@ -81,6 +81,7 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
   if (!loading && availableProducts.length === 0) {
     return (
       <View style={styles.center}>
+        <NavigationEvents onWillFocus={() => fetchProducts()} />
         <Text style={styles.noproducts}>
           No products found. Maybe start adding some!
         </Text>

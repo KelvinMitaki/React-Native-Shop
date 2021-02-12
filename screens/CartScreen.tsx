@@ -101,6 +101,9 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
               setLoading(false);
               setError("Error placing order");
               console.log(error);
+              if (error.response.status === 401) {
+                navigation.navigate("Auth");
+              }
             }
           }}
         />

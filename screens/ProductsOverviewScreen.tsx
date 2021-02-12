@@ -39,7 +39,7 @@ export interface FetchProducts {
 
 const ProductsOverviewScreen: NavigationStackScreenComponent<{
   quantity?: number;
-}> = () => {
+}> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +61,9 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
     } catch (error) {
       shouldLoad ? setLoading(false) : setRefresh(false);
       setError("An Error occured while fetching products");
+      if (error.response.status === 401) {
+        navigation.navigate("Auth");
+      }
     }
   }, []);
   useEffect(() => {

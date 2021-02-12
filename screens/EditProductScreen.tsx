@@ -341,6 +341,9 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                   setLoading(false);
                   setError("Error editing product");
                   console.log(error);
+                  if (error.response.status === 401) {
+                    navigation.navigate("Auth");
+                  }
                 }
               }
               const newProduct = navigation.getParam("newProduct");
@@ -354,12 +357,13 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                 try {
                   setLoading(true);
                   setError(null);
-                  const {
-                    data
-                  } = await axios.post(`/products.json?auth=${token}`, {
-                    ...product,
-                    ownerId: userId
-                  });
+                  const { data } = await axios.post(
+                    `/products.json?auth=${token}`,
+                    {
+                      ...product,
+                      ownerId: userId
+                    }
+                  );
                   newProduct({
                     type: "addProduct",
                     payload: { ...product, id: data.name } as Prod
@@ -370,6 +374,9 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                   setLoading(false);
                   setError("Error adding product");
                   console.log(error);
+                  if (error.response.status === 401) {
+                    navigation.navigate("Auth");
+                  }
                 }
               }
               if (!formIsValid) {

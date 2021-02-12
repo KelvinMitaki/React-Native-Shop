@@ -53,6 +53,9 @@ const OrdersScreen: NavigationStackScreenComponent = ({ navigation }) => {
       shouldLoad && setLoading(false);
       setError("Error fetching orders");
       console.log(error);
+      if (error.response.status === 401) {
+        navigation.navigate("Auth");
+      }
     }
   }, []);
 

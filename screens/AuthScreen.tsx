@@ -19,7 +19,7 @@ import {
   StackNavigationOptions,
   StackNavigationProp
 } from "react-navigation-stack/lib/typescript/src/vendor/types";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Field, InjectedFormProps, reduxForm } from "redux-form";
 import axios from "../axios/axios";
 import Colors from "../constants/Colors";
@@ -29,6 +29,21 @@ import { Redux } from "../interfaces/Redux";
 interface FormValues {
   email: string;
   password: string;
+}
+
+export interface SignUp {
+  type: "signup";
+  payload: {
+    token: string;
+    userId: string;
+  };
+}
+export interface SignIn {
+  type: "signin";
+  payload: {
+    token: string;
+    userId: string;
+  };
 }
 
 const AuthScreen: React.FC<
@@ -47,6 +62,7 @@ const AuthScreen: React.FC<
   const [loading, setLoading] = useState<boolean>(false);
   const [auth, setAuth] = useState<"signup" | "signin">("signin");
   const [error, setError] = useState<string | null>(null);
+  const dispatch = useDispatch();
   useEffect(() => {
     props.navigation.setParams({ auth });
   }, [auth]);
@@ -64,6 +80,18 @@ const AuthScreen: React.FC<
         { ...form.AuthScreen.values, returnSecureToken: true }
       );
       setLoading(false);
+      if (auth === "signin") {
+        dispatch<SignIn>({
+          type: "signin",
+          payload: { token: data.idToken, userId: data.localId }
+        });
+      } else {
+        dispatch<SignUp>({
+          type: "signup",
+          payload: { token: data.idToken, userId: data.localId }
+        });
+      }
+      props.navigation.navigate("Main");
       console.log(data);
     } catch (error) {
       if (auth === "signin") {
@@ -97,7 +125,7 @@ const AuthScreen: React.FC<
                 />
                 {error && <Text style={styles.error}>{error}</Text>}
                 <Button
-                  title="Submit"
+                  title={auth === "signin" ? "Sign In" : "Sign Up"}
                   buttonStyle={styles.btn}
                   disabled={props.invalid}
                   onPress={authenticate}

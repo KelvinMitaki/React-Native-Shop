@@ -1,13 +1,23 @@
-import { AnyAction } from "redux";
+import { SignIn, SignUp } from "../../screens/AuthScreen";
 
-export interface AuthState {}
+export interface AuthState {
+  token: string | null;
+  userId: string | null;
+}
 
-type Action = AnyAction;
+type Action = SignIn | SignUp;
 
-const INITIAL_STATE: AuthState = {};
+const INITIAL_STATE: AuthState = {
+  token: null,
+  userId: null
+};
 
 const authReducer = (state = INITIAL_STATE, action: Action): AuthState => {
   switch (action.type) {
+    case "signup":
+      return { ...state, ...action.payload };
+    case "signin":
+      return { ...state, ...action.payload };
     default:
       return state;
   }

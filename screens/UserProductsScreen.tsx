@@ -1,6 +1,10 @@
 import React from "react";
 import { FlatList, Platform, StyleSheet, Text, View } from "react-native";
-import { NavigationParams, NavigationRoute } from "react-navigation";
+import {
+  NavigationEvents,
+  NavigationParams,
+  NavigationRoute
+} from "react-navigation";
 import { NavigationDrawerProp } from "react-navigation-drawer";
 import {
   HeaderButton,
@@ -8,7 +12,7 @@ import {
   Item
 } from "react-navigation-header-buttons";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 import ProductItem from "../components/shop/ProductItem";
 import Colors from "../constants/Colors";
@@ -22,10 +26,27 @@ export interface DeleteItem {
   };
 }
 
+export interface SetUserProducts {
+  type: "setUserProducts";
+  payload: string;
+}
+
 const UserProductsScreen: NavigationStackScreenComponent = () => {
-  const { userProducts } = useSelector((state: Redux) => state.products);
+  const dispatch = useDispatch();
+  const {
+    products: { userProducts },
+    auth: { userId }
+  } = useSelector((state: Redux) => state);
   return (
     <View>
+      <NavigationEvents
+        onWillFocus={() =>
+          dispatch<SetUserProducts>({
+            type: "setUserProducts",
+            payload: userId!
+          })
+        }
+      />
       <FlatList
         data={userProducts}
         keyExtractor={p => p.id}

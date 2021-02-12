@@ -2,14 +2,19 @@ import PRODUCTS from "../../data/dummy-data";
 import Product from "../../models/Product";
 import { AddNewProduct, EditProduct } from "../../screens/EditProductScreen";
 import { FetchProducts } from "../../screens/ProductsOverviewScreen";
-import { DeleteItem } from "../../screens/UserProductsScreen";
+import { DeleteItem, SetUserProducts } from "../../screens/UserProductsScreen";
 
 export interface ProductsState {
   availableProducts: Product[];
   userProducts: Product[];
 }
 
-type Action = DeleteItem | AddNewProduct | EditProduct | FetchProducts;
+type Action =
+  | DeleteItem
+  | AddNewProduct
+  | EditProduct
+  | FetchProducts
+  | SetUserProducts;
 
 const INITIAL_STATE: ProductsState = {
   availableProducts: [],
@@ -24,8 +29,14 @@ const productReducer = (
     case "fetchProducts":
       return {
         ...state,
-        availableProducts: action.payload,
-        userProducts: action.payload.filter(p => p.ownerId === "u1")
+        availableProducts: action.payload
+      };
+    case "setUserProducts":
+      return {
+        ...state,
+        userProducts: state.availableProducts.filter(
+          p => p.ownerId === action.payload
+        )
       };
     case "deleteItem":
       const { id, ownerId } = action.payload;

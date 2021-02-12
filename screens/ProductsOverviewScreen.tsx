@@ -41,6 +41,7 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
   quantity?: number;
 }> = () => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const {
     products: { availableProducts },
@@ -50,15 +51,15 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
   const fetchProducts = useCallback(async (shouldLoad?: boolean) => {
     try {
       setError(null);
-      shouldLoad && setLoading(true);
+      shouldLoad ? setLoading(true) : setRefresh(true);
       let { data } = await axios.get(`/products.json?auth=${token}`);
       if (data && typeof data === "object") {
         data = Object.keys(data).map(key => ({ id: key, ...data[key] }));
         dispatch<FetchProducts>({ type: "fetchProducts", payload: data });
       }
-      shouldLoad && setLoading(false);
+      shouldLoad ? setLoading(false) : setRefresh(false);
     } catch (error) {
-      shouldLoad && setLoading(false);
+      shouldLoad ? setLoading(false) : setRefresh(false);
       setError("An Error occured while fetching products");
     }
   }, []);
@@ -105,7 +106,7 @@ const ProductsOverviewScreen: NavigationStackScreenComponent<{
         keyExtractor={i => i.id}
         renderItem={({ item }) => <ProductItem {...item} />}
         onRefresh={fetchProducts}
-        refreshing={loading}
+        refreshing={refresh}
       />
     </>
   );

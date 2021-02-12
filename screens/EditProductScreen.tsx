@@ -103,12 +103,13 @@ const EditProductScreen: NavigationStackScreenComponent<{
   setLoading?: React.Dispatch<React.SetStateAction<boolean>>;
   setError?: React.Dispatch<React.SetStateAction<string | null>>;
   token?: string | null;
+  userId?: string | null;
 }> = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const {
     products,
-    auth: { token }
+    auth: { token, userId }
   } = useSelector((state: Redux) => state);
   const product = products.userProducts.find(
     p => p.id === navigation.getParam("productId")
@@ -155,7 +156,7 @@ const EditProductScreen: NavigationStackScreenComponent<{
     });
   };
   useEffect(() => {
-    navigation.setParams({ setLoading, setError, token });
+    navigation.setParams({ setLoading, setError, token, userId });
   }, [loading, setLoading, error, setError]);
   useEffect(() => {
     if (!product) {
@@ -315,6 +316,7 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
               const setLoading = navigation.getParam("setLoading");
               const setError = navigation.getParam("setError");
               const token = navigation.getParam("token");
+              const userId = navigation.getParam("userId");
               if (
                 editProduct &&
                 product &&
@@ -327,7 +329,7 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                   setError(null);
                   await axios.patch(
                     `/products/${product.id}.json?auth=${token}`,
-                    product
+                    { ...product, ownerId: userId }
                   );
                   editProduct({
                     type: "editProduct",
@@ -352,10 +354,12 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                 try {
                   setLoading(true);
                   setError(null);
-                  const { data } = await axios.post(
-                    `/products.json?auth=${token}`,
-                    product
-                  );
+                  const {
+                    data
+                  } = await axios.post(`/products.json?auth=${token}`, {
+                    ...product,
+                    ownerId: userId
+                  });
                   newProduct({
                     type: "addProduct",
                     payload: { ...product, id: data.name } as Prod

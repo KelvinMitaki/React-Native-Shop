@@ -34,7 +34,7 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
   const dispatch = useDispatch();
   const {
     cart: { items, totalAmount },
-    auth: { token }
+    auth: { token, userId }
   } = useSelector((state: Redux) => state);
   if (loading) {
     return (
@@ -82,11 +82,14 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
               setLoading(true);
               setError(null);
               const date = new Date();
-              const { data } = await axios.post(`/orders.json?auth=${token}`, {
-                items,
-                totalAmount,
-                date
-              });
+              const { data } = await axios.post(
+                `/orders/${userId}.json?auth=${token}`,
+                {
+                  items,
+                  totalAmount,
+                  date
+                }
+              );
               dispatch<AddOrder>({
                 type: "addOrder",
                 payload: { items, totalAmount, date, id: data.name }

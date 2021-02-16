@@ -360,9 +360,9 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                 status.granted
               ) {
                 try {
-                  const res = await Notifications.getExpoPushTokenAsync();
                   setLoading(true);
                   setError(null);
+                  const res = await Notifications.getExpoPushTokenAsync();
                   const { data } = await axios.post(
                     `/products.json?auth=${token}`,
                     {

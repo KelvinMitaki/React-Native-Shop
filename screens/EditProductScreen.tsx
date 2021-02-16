@@ -33,6 +33,7 @@ interface Prod {
   description: string;
   ownerId: "u1";
   id?: string;
+  ownerPushToken?: string;
 }
 interface Valid {
   title?: boolean;
@@ -329,13 +330,18 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                 try {
                   setLoading(true);
                   setError(null);
+                  const res = await Notifications.getExpoPushTokenAsync();
                   await axios.patch(
                     `/products/${product.id}.json?auth=${token}`,
-                    { ...product, ownerId: userId }
+                    { ...product, ownerId: userId, ownerPushToken: res.data }
                   );
                   editProduct({
                     type: "editProduct",
-                    payload: product as Product
+                    payload: {
+                      ...product,
+                      ownerId: userId,
+                      ownerPushToken: res.data
+                    } as Product
                   });
                   navigation.popToTop();
                   setLoading(false);
@@ -373,7 +379,11 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                   );
                   newProduct({
                     type: "addProduct",
-                    payload: { ...product, id: data.name } as Prod
+                    payload: {
+                      ...product,
+                      id: data.name,
+                      ownerPushToken: res.data
+                    } as Prod
                   });
                   navigation.popToTop();
                   setLoading(false);

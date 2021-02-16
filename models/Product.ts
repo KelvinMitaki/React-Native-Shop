@@ -5,6 +5,7 @@ class Product {
   imageUrl: string;
   description: string;
   price: number;
+  ownerPushToken?: string;
 
   constructor(
     id: string,

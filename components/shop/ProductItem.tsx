@@ -19,11 +19,9 @@ interface Props {
   isAdmin?: boolean;
 }
 
-const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
-  navigation,
-  isAdmin,
-  ...prod
-}) => {
+const ProductItem: React.FC<
+  Product & NavigationInjectedProps & Props
+> = React.memo(({ navigation, isAdmin, ...prod }) => {
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const dispatch = useDispatch();
   let Touchable;
@@ -111,7 +109,7 @@ const ProductItem: React.FC<Product & NavigationInjectedProps & Props> = ({
       </View>
     </Touchable>
   );
-};
+});
 
 export default withNavigation(ProductItem);
 

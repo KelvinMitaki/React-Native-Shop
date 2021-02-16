@@ -10,41 +10,40 @@ interface Props {
   hideDelete?: boolean;
 }
 
-const CartItemComponent: React.FC<CartItem & Props> = ({
-  hideDelete,
-  ...it
-}) => {
-  const dispatch = useDispatch();
-  return (
-    <View style={styles.item}>
-      <View style={styles.left}>
-        <Text style={styles.qty}>{it.quantity}</Text>
-        <Text style={styles.title} numberOfLines={1}>
-          {it.title}
-        </Text>
+const CartItemComponent: React.FC<CartItem & Props> = React.memo(
+  ({ hideDelete, ...it }) => {
+    const dispatch = useDispatch();
+    return (
+      <View style={styles.item}>
+        <View style={styles.left}>
+          <Text style={styles.qty}>{it.quantity}</Text>
+          <Text style={styles.title} numberOfLines={1}>
+            {it.title}
+          </Text>
+        </View>
+        <View style={styles.right}>
+          <Text style={styles.price}>${it.price}</Text>
+          {!hideDelete && (
+            <TouchableOpacity>
+              <MaterialCommunityIcons
+                name="delete"
+                color="red"
+                size={23}
+                style={{ paddingLeft: 10 }}
+                onPress={() =>
+                  dispatch<RemoveFromCart>({
+                    type: "removeFromCart",
+                    payload: it.id
+                  })
+                }
+              />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
-      <View style={styles.right}>
-        <Text style={styles.price}>${it.price}</Text>
-        {!hideDelete && (
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="delete"
-              color="red"
-              size={23}
-              style={{ paddingLeft: 10 }}
-              onPress={() =>
-                dispatch<RemoveFromCart>({
-                  type: "removeFromCart",
-                  payload: it.id
-                })
-              }
-            />
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
-  );
-};
+    );
+  }
+);
 
 export default CartItemComponent;
 

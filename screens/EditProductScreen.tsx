@@ -330,17 +330,15 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                 try {
                   setLoading(true);
                   setError(null);
-                  const res = await Notifications.getExpoPushTokenAsync();
                   await axios.patch(
                     `/products/${product.id}.json?auth=${token}`,
-                    { ...product, ownerId: userId, ownerPushToken: res.data }
+                    { ...product, ownerId: userId }
                   );
                   editProduct({
                     type: "editProduct",
                     payload: {
                       ...product,
-                      ownerId: userId,
-                      ownerPushToken: res.data
+                      ownerId: userId
                     } as Product
                   });
                   navigation.popToTop();

@@ -5,7 +5,7 @@ import Colors from "../../constants/Colors";
 import Order from "../../models/Order";
 import CartItemComponent from "./CartItem";
 
-const OrderItem: React.FC<Order> = order => {
+const OrderItem: React.FC<Order> = React.memo(order => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
   return (
     <View style={styles.order}>
@@ -26,7 +26,7 @@ const OrderItem: React.FC<Order> = order => {
         ))}
     </View>
   );
-};
+});
 
 export default OrderItem;
 

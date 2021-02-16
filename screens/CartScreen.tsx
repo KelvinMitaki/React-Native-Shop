@@ -91,10 +91,22 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
                   date
                 }
               );
+              items.forEach(async it => {
+                try {
+                  await axios.post(`https://exp.host/--/api/v2/push/send`, {
+                    to: it.ownerPushToken,
+                    title: "order was placed",
+                    body: it.title
+                  });
+                } catch (error) {
+                  console.log(error.response);
+                }
+              });
               dispatch<AddOrder>({
                 type: "addOrder",
                 payload: { items, totalAmount, date, id: data.name }
               });
+
               dispatch<ClearCart>({ type: "clearCart" });
               navigation.navigate("Orders");
               setLoading(false);

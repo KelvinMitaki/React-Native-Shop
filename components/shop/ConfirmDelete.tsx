@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Overlay } from "react-native-elements";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "../../axios/axios";
 import Colors from "../../constants/Colors";
+import { Redux } from "../../interfaces/Redux";
 import Product from "../../models/Product";
 import { DeleteItem } from "../../screens/UserProductsScreen";
 
@@ -20,6 +21,7 @@ const ConfirmDelete: React.FC<Props & Product> = ({
   ownerId
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const { token } = useSelector((state: Redux) => state.auth);
   const dispatch = useDispatch();
   return (
     <Overlay isVisible={confirmDelete}>
@@ -43,7 +45,7 @@ const ConfirmDelete: React.FC<Props & Product> = ({
             onPress={async () => {
               try {
                 setLoading(true);
-                await axios.delete(`/products/${id}.json`);
+                await axios.delete(`/products/${id}.json?auth=${token}`);
                 dispatch<DeleteItem>({
                   type: "deleteItem",
                   payload: {
@@ -56,7 +58,7 @@ const ConfirmDelete: React.FC<Props & Product> = ({
               } catch (error) {
                 setLoading(false);
                 setConfirmDelete(false);
-                console.log(error);
+                console.log(error.response.data);
               }
             }}
           />

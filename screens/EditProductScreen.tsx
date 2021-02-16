@@ -24,6 +24,7 @@ import Product from "../models/Product";
 import { Dispatch } from "redux";
 import axios from "../axios/axios";
 import AsyncStorage from "@react-native-community/async-storage";
+import * as Notifications from "expo-notifications";
 
 interface Prod {
   title: string;
@@ -349,21 +350,25 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                 }
               }
               const newProduct = navigation.getParam("newProduct");
+              const status = await Notifications.requestPermissionsAsync();
               if (
                 newProduct &&
                 product &&
                 formIsValid &&
                 setLoading &&
-                setError
+                setError &&
+                status.granted
               ) {
                 try {
+                  const res = await Notifications.getExpoPushTokenAsync();
                   setLoading(true);
                   setError(null);
                   const { data } = await axios.post(
                     `/products.json?auth=${token}`,
                     {
                       ...product,
-                      ownerId: userId
+                      ownerId: userId,
+                      ownerPushToken: res.data
                     }
                   );
                   newProduct({
@@ -381,6 +386,8 @@ EditProductScreen.navigationOptions = ({ navigation }) => {
                     navigation.navigate("Auth");
                   }
                 }
+              } else {
+                setError && setError("Error adding product");
               }
               if (!formIsValid) {
                 Alert.alert("Please fill in all form values");

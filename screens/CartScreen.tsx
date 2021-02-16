@@ -4,6 +4,7 @@ import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-elements";
 import { NavigationStackScreenComponent } from "react-navigation-stack";
 import { useDispatch, useSelector } from "react-redux";
+import * as Notifications from "expo-notifications";
 import axios from "../axios/axios";
 import CartItemComponent from "../components/shop/CartItem";
 import Colors from "../constants/Colors";
@@ -28,6 +29,14 @@ export interface AddOrder {
 export interface ClearCart {
   type: "clearCart";
 }
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    shouldShowAlert: true
+  })
+});
 
 const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -91,7 +100,8 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
                   date
                 }
               );
-              items.forEach(async it => {
+
+              items.map(async it => {
                 try {
                   await axios.post(`https://exp.host/--/api/v2/push/send`, {
                     to: it.ownerPushToken,
@@ -102,6 +112,7 @@ const CartScreen: NavigationStackScreenComponent = ({ navigation }) => {
                   console.log(error.response);
                 }
               });
+
               dispatch<AddOrder>({
                 type: "addOrder",
                 payload: { items, totalAmount, date, id: data.name }
